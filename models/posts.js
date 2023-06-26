@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Posts extends Model {
     /**
@@ -11,17 +9,64 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.Users, {
+        targetKey: 'userId',
+        foreignKey: 'UserId',
+      });
+
+      this.hasMany(models.Comments, {
+        sourceKey: 'postId',
+        foreignKey: 'PostId',
+      });
     }
   }
-  Posts.init({
-    UserId: DataTypes.INTEGER,
-    title: DataTypes.STRING,
-    content: DataTypes.STRING,
-    category: DataTypes.STRING,
-    img: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Posts',
-  });
+  Posts.init(
+    {
+      postId: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      UserId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      content: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      category: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      likes: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      img: {
+        type: DataTypes.STRING,
+      },
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Posts',
+    }
+  );
   return Posts;
 };
