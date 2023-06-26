@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mysql2": "^3.4.1",
+    "sequelize": "^6.32.1"
+  },
+  "name": "team_destructure_project",
+  "description": "9조분해 팀 프로젝트 입니다.",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {
+    "sequelize-cli": "^6.6.1"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/issuebombom/team_destructure_project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/issuebombom/team_destructure_project/issues"
+  },
+  "homepage": "https://github.com/issuebombom/team_destructure_project#readme"
+}
