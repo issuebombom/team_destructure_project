@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Users extends Model {
+  class Categorys extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,70 +9,59 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.Posts, {
-        sourceKey: 'userId',
+      this.belongsTo(models.Users, {
+        targetKey: 'userId',
         foreignKey: 'UserId',
       });
 
-      this.hasMany(models.Comments, {
-        sourceKey: 'userId',
-        foreignKey: 'UserId',
-      });
-
-      this.hasOne(models.Categorys, {
-        sourceKey: 'userId',
-        foreignKey: 'UserId',
-      });
-
-      this.hasMany(models.Likes, {
-        sourceKey: 'userId',
-        foreignKey: 'UserId',
+      this.belongsTo(models.Posts, {
+        targetKey: 'postId',
+        foreignKey: 'PostId',
       });
     }
   }
-  Users.init(
+  Categorys.init(
     {
-      userId: {
+      categoryId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      nickname: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
+      UserId: {
+        type: DataTypes.INTEGER,
       },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      PostId: {
+        type: DataTypes.INTEGER,
       },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      category: {
+      restaurants: {
         type: DataTypes.STRING,
       },
-      refreshToken: {
+      game: {
+        type: DataTypes.STRING,
+      },
+      trade: {
+        type: DataTypes.STRING,
+      },
+      exercise: {
+        type: DataTypes.STRING,
+      },
+      music: {
         type: DataTypes.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+        type: DataTypes.NOW,
       },
       updatedAt: {
         allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+        type: DataTypes.NOW,
       },
     },
     {
       sequelize,
-      modelName: 'Users',
+      modelName: 'Categorys',
     }
   );
-  return Users;
+  return Categorys;
 };

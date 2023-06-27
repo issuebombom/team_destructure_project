@@ -18,6 +18,16 @@ module.exports = (sequelize, DataTypes) => {
         sourceKey: 'postId',
         foreignKey: 'PostId',
       });
+
+      this.hasOne(models.Categorys, {
+        sourceKey: 'postId',
+        foreignKey: 'PostId',
+      });
+
+      this.hasMany(models.Likes, {
+        sourceKey: 'postId',
+        foreignKey: 'PostId',
+      });
     }
   }
   Posts.init(
@@ -47,11 +57,6 @@ module.exports = (sequelize, DataTypes) => {
       category: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
-      likes: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
       },
       img: {
         type: DataTypes.STRING,
