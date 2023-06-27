@@ -2,10 +2,11 @@ const express = require('express');
 const { Op } = require('sequelize');
 const { Posts } = require('../models');
 const router = express.Router();
+const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.middleware.js');
 
 // 게시글 작성
 // img 경로에 대한 확인이 필요
-router.post('/posts', async (req, res) => {
+router.post('/posts', verifyAccessToken, replaceAccessToken, async (req, res) => {
   try {
     const userId = res.locals.user;
     const { category, nickname, title, content } = req.body;
