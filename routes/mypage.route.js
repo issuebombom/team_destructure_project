@@ -1,4 +1,5 @@
 const express = require('express');
+<<<<<<< HEAD
 const { Op } = require('sequelize');
 const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.middleware.js');
 const Users = require('../models/users.js');
@@ -13,6 +14,18 @@ router.get('/mypage', (req, res) => {
 
 // 유저 정보 조회
 router.get('/mypage/:userId', verifyAccessToken, replaceAccessToken, async (req, res) => {
+=======
+const router = express.Router();
+const authMiddleware = require('../middleware/auth.middleware.js');
+const Users = require('../models/users.js');
+const Posts = require('../models/posts.js');
+const Comments = require('../models/comments.js');
+const { Mypage } = require('../models/mypage.js');
+const { Op } = require('sequelize');
+
+// 유저 정보 조회
+router.get('/mypage/:userId', authMiddleware, async (req, res) => {
+>>>>>>> f167487 (after merge)
   const { userId } = req.params;
   const user = await Users.findByPk(userId);
   const writtenPosts = await Posts.findAll({ where: { userId: userId } });
@@ -54,7 +67,11 @@ router.get('/mypage/:userId', verifyAccessToken, replaceAccessToken, async (req,
 });
 
 // 유저 정보 수정
+<<<<<<< HEAD
 router.put('/mypage/:userId', verifyAccessToken, replaceAccessToken, async (req, res) => {
+=======
+router.put('/mypage/:userId', authMiddleware, async (req, res) => {
+>>>>>>> f167487 (after merge)
   const { userId } = req.params;
   const { nickname, email, password, category } = req.body;
   try {
