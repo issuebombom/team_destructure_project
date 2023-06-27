@@ -7,7 +7,7 @@ const router = express.Router();
 // 게시글 작성
 // img 경로에 대한 확인이 필요
 router.post('/posts', verifyAccessToken, replaceAccessToken, async (req, res) => {
-  // try {
+ try {
   const userId = res.locals.user;
   console.log(userId.nickname);
   const { category, title, content } = req.body;

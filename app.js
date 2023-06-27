@@ -1,10 +1,11 @@
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const express = require('express');
+const { verifyAccessToken, replaceAccessToken } = require('./middleware/auth.middleware');
 
-const mypageRouter = require('./routes/mypage.route');
 const usersRouter = require('./routes/users.router');
 const postsRouter = require('./routes/posts.router');
+const mypageRouter = require('./routes/mypage.router');
 // const commentsRouter = require('./routes/comments.router');
 
 const HOST = '127.0.0.1';
