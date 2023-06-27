@@ -9,7 +9,7 @@ const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.mi
 router.post('/posts', verifyAccessToken, replaceAccessToken, async (req, res) => {
   try {
     const userId = res.locals.user;
-    const { category, nickname, title, content } = req.body;
+    const { category, title, content } = req.body;
 
     if (!title || !content) {
       res.status(412).json({
@@ -20,11 +20,10 @@ router.post('/posts', verifyAccessToken, replaceAccessToken, async (req, res) =>
 
     await Posts.create({
       UserId: userId.userId,
-      nickname: nickname,
+      Nickname: userId.nickname,
       category,
       title,
       content,
-      likes,
     });
 
     res.status(201).json({

@@ -1,10 +1,10 @@
 const express = require('express');
 const { Op } = require('sequelize');
+const Mypage = require('../models/mypage.js');
 const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.middleware.js');
 const Users = require('../models/users.js');
 const Posts = require('../models/posts.js');
 const Comments = require('../models/comments.js');
-const Mypage = require('../models/mypage.js');
 const router = express.Router();
 
 router.get('/mypage', (req, res) => {
@@ -26,30 +26,29 @@ router.get('/mypage/:userId', verifyAccessToken, replaceAccessToken, async (req,
           nickname: a.nickname,
           email: a.email,
           password: a.password,
-          category: a.category,
         };
       }),
     };
-    const writtenPostsData = {
-      writtenPosts: writtenPosts.map((b) => {
-        return {
-          postId: b.postId,
-          title: b.title,
-          content: b.content,
-        };
-      }),
-    };
-    const writtenCommentsData = {
-      writtenComments: writtenComments.map((c) => {
-        return {
-          commentId: c.commentId,
-          content: c.content,
-        };
-      }),
-    };
-    res.status(200).json(userData, writtenPostsData, writtenCommentsData);
+    // const writtenPostsData = {
+    //   writtenPosts: writtenPosts.map((b) => {
+    //     return {
+    //       postId: b.postId,
+    //       title: b.title,
+    //       content: b.content,
+    //     };
+    //   }),
+    // };
+    // const writtenCommentsData = {
+    //   writtenComments: writtenComments.map((c) => {
+    //     return {
+    //       commentId: c.commentId,
+    //       content: c.content,
+    //     };
+    //   }),
+    // };
+    res.status(200).json(userData);
   } catch {
-    //
+    // , writtenPostsData, writtenCommentsData
   }
 });
 
