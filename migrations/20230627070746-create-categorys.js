@@ -2,8 +2,8 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Posts', {
-      postId: {
+    await queryInterface.createTable('Categorys', {
+      categoryId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -11,44 +11,44 @@ module.exports = {
       },
       UserId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      Nickname: {
-        allowNull: false,
-        type: Sequelize.STRING,
         references: {
           model: 'Users',
-          key: 'nickname',
+          key: 'userId',
         },
       },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false,
+      PostId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Posts',
+          key: 'postId',
+        },
       },
-      content: {
+      restaurants: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
-      category: {
+      game: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
-      img: {
+      trade: {
+        type: Sequelize.STRING,
+      },
+      exercise: {
+        type: Sequelize.STRING,
+      },
+      music: {
         type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
       },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Posts');
+    await queryInterface.dropTable('Categorys');
   },
 };
