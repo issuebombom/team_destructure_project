@@ -6,6 +6,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.4.1",
+    "nodemon": "^2.0.22",
     "sequelize": "^6.32.1"
   },
   "name": "team_destructure_project",
@@ -16,7 +17,7 @@
     "sequelize-cli": "^6.6.1"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon app.js",
     "dev": "nodemon server.js"
   },
   "repository": {

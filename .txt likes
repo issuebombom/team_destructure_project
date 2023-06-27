@@ -1,0 +1,5 @@
+1.게시글을 생성 할때 좋아요도 함께 생성하기 // back 2. html에 좋아요
+<button>
+  을 추가 // front 3. 사용자가 생성된 좋아요버튼을 클릭할때, 로그인을 한 UserID로 횟수가 카운트 //
+  back 4. front likes button과 back likes API 연결 5. test 후 DB확인
+</button>
