@@ -2,7 +2,7 @@ const { Users } = require('../models');
 const errors = require('../assets/errors');
 const authMiddleware = require('../middleware/auth.middleware');
 const bcrypt = require('bcrypt');
-const express = require('express')
+const express = require('express');
 const router = express.Router();
 
 // 회원가입
@@ -98,6 +98,7 @@ router.get('/logout/:userId', async (req, res) => {
   try {
     // 데이터베이스에서 유저 정보 조회
     const user = await Users.findByPk(userId);
+
     if (!user) return res.status(errors.notUser.status).send({ msg: errors.notUser.msg });
 
     // 쿠키가 없는 경우
