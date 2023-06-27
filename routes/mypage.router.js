@@ -14,11 +14,21 @@ router.get('/mypage', (req, res) => {
 // 유저 정보 조회
 router.get('/mypage/:userId', verifyAccessToken, replaceAccessToken, async (req, res) => {
   const { userId } = req.params;
+  // console.log(req.params);
   const user = await Users.findByPk(userId);
+  console.log(user);
   const writtenPosts = await Posts.findAll({ where: { userId: userId } });
+  console.log(writtenPosts);
   const writtenComments = await Comments.findAll({ where: { userId: userId } });
+  console.log(writtenComments);
 
   try {
+    // if (!user) {
+    //   return res.status(412).json({ errorMessage: '해당하는 유저는 존재하지 않습니다.' });
+    // }
+    // if (!writtenPosts && !writtenComments) {
+    //   alert('현재 게시된 게시물과 댓글이 없습니다.');
+    // }
     const userData = {
       userDetail: user.map((a) => {
         return {
