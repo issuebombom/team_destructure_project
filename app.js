@@ -1,7 +1,7 @@
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const express = require('express');
-const Users = require('./models/users');
+const postsRouter = require('./routes/post.route');
 
 const HOST = '127.0.0.1';
 const PORT = 3000;
@@ -17,16 +17,9 @@ app.use(cookieParser()); // npm i cookie-parser
 
 // app.use('/users', usersRouter);
 // app.use('/auth', authorizationRouter);
-// app.use('/posts', postsRouter);
+app.use('/', [postsRouter]);
 
 // 예시
-app.get('/', async (req, res) => {
-  try {
-    const findUsers = await Users.findByPk(1);
-  } catch {
-    res.send({ msg: '데이터가 없음' });
-  }
-});
 
 app.listen(PORT, HOST, () => {
   console.log('Server is listening...', PORT);
