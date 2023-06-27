@@ -1,125 +1,180 @@
 const express = require('express');
-const { Posts } = require('../models');
-
 const { Op } = require('sequelize');
+const { Posts } = require('../models');
 const router = express.Router();
 
-// 최신 게시글 조회 API
-router.get('/posts', async (req, res) => {
+// 게시글 작성
+// img 경로에 대한 확인이 필요
+router.post('/posts', async (req, res) => {
   try {
-    const posts = await Posts.findAll({
-      attributes: ['UserId', 'category', 'title', 'content', 'likes'], // 조회 할 목록들입니다.
-      order: [['createdAt', 'DESC']], // 내림차순으로 조회합니다.
+    const userId = res.locals.user;
+    const { category, nickname, title, content } = req.body;
+
+    if (!title || !content) {
+      res.status(412).json({
+        message: '제목 또는 내용을 입력해주세요',
+      });
+      return;
+    }
+
+    await Posts.create({
+      UserId: userId.userId,
+      nickname: nickname,
+      category,
+      title,
+      content,
+      likes,
     });
-    if (!posts) return res.status(404).json({ message: '게시글이 존재하지 않습니다.' });
-    return res.status(200).json({ data: posts });
-  } catch (error) {
-    res.status(400).json({ message: '게시글 조회에 실패하였습니다.' });
+
+    res.status(201).json({
+      message: '게시글 생성완료',
+    });
+  } catch {
+    return res.status(412).json({
+      message: '데이터 형식이 올바르지 않아 생성에 실패했습니다.',
+    });
   }
 });
 
-// 게시글 상세 조회 API
+// 최신 게시글 조회 API
+// res는 추후 수정필요 (하나의 파일로 관리하여 오류메세지 통일)
+router.get('/posts', async (req, res) => {
+  try {
+    const postList = await Posts.findAll({
+      attributes: ['nickname', 'category', 'title', 'content'],
+      order: [['createdAt', 'DESC']],
+    });
+
+    if (!postList.length) {
+      return res.status(404).json({
+        message: '조회할 게시글이 없습니다.',
+      });
+    }
+
+    res.status(200).json({
+      postList: postList,
+    });
+  } catch {
+    return res.status(400).json({
+      message: '게시글 조회에 실패하였습니다.',
+    });
+  }
+});
+
+// 관심사 게시글 조회
+router.get('/posts/category/:category', async (req, res) => {
+  try {
+    const { category } = req.params;
+    // userId.category와 DB에서찾아온 category값을 비교하여 맞는 데이터를 출력해주는 느낌으로
+    // const { userId } = res.locals.user;
+    if (!category) {
+      return res.status(404).json({
+        message: '설정된 관심사가 없습니다. 마이페이지에서 관심사를 등록해주세요.',
+      });
+    }
+
+    const interests = await Posts.findAll({ where: { category } });
+
+    res.status(200).json({
+      interests: interests,
+    });
+  } catch {
+    return res.status(400).json({
+      message: '게시글 조회에 실패하였습니다.',
+    });
+  }
+});
+
+// 게시글 상세 조회
 router.get('/posts/:postId', async (req, res) => {
   try {
     const { postId } = req.params;
-    const post = await Posts.findOne({
-      where: { postId },
+    const postDetail = await Posts.findOne({
       attributes: [
+        'postId',
         'userId',
+        'category',
         'nickname',
         'title',
-        'category',
         'content',
-        'likes',
         'img',
         'createdAt',
         'updatedAt',
       ],
-    });
-    if (!postId) return res.status(403).json({ message: '해당 게시글이 없습니다.' });
-    return res.status(200).json({ data: post });
-  } catch (err) {
-    res.status(404).json({ message: '게시글 조회 실패' });
-  }
-});
-
-// 관심 게시글 조회      // if category === userId.category가 같을때 한번에 조회하는 방법 => 작성 필요
-router.get('/posts/category', async (req, res) => {
-  try {
-    const { category } = req.params;
-    const { userId } = res.locals.user;
-    const { likePost } = await Posts.findAll({
-      where: { category },
-    });
-    if (!likePost) return res.status(403).json({ message: '해당하는 카테고리가 x' });
-    return res.status(200).json({ data: likePost });
-  } catch (error) {
-    res.status(400).json({ message: '관심 게시글 조회에 실패하였습니다.' });
-  }
-});
-
-// 게시글 작성 API
-router.post('/posts', async (req, res) => {
-  try {
-    const { title, content, category } = req.body;
-    const { userId } = res.locals.user;
-    const post = await Posts.create({
-      UserId: userId,
-      title,
-      content,
-      category,
-      likes,
-    });
-    if (!post) return res.status(400).json({ message: '게시글 작성에 실패하였습니다.' });
-    return res.status(200).json({ data: { post } });
-  } catch (error) {
-    res.status(400).json({ message: '게시글 생성에 실패하였습니다.' });
-  }
-});
-
-//게시글 수정 API
-router.put('/posts/:postId', async (req, res) => {
-  try {
-    const { title, content, category } = req.body;
-    const { postId } = req.params;
-    const { userId } = res.locals.user;
-    const rePost = await Posts.findById({
       where: { postId },
     });
-    if (!rePost) res.status(403).json({ message: '해당 게시글을 찾을수 없습니다.' });
-    await Posts.update({
-      where: { [Op.and]: [{ postId }, { UserId: userId }, { title, content, category }] },
-    });
-    if (!content || !title)
-      return res.status(403).json({ message: '제목 또는 내용을 입력해주세요.' });
 
-    return res.status(200).json({ message: '수정이 완료되었습니다.' });
-  } catch (error) {
-    res.status(400).json({ message: '수정에 실패하였습니다.' });
+    if (!postDetail) {
+      return res.status(404).json({
+        message: '해당 게시글을 찾을 수 없습니다.',
+      });
+    }
+
+    res.status(200).json({
+      Detail: postDetail,
+    });
+  } catch {
+    return res.status(400).json({
+      message: '게시글 조회에 실패하였습니다.',
+    });
   }
 });
 
-// 게시글 삭제 API
+// 게시글 수정
+// 수정&삭제버튼은 작성자에게만 보이는 기능인지?  있다면 아래 주석 삭제
+router.put('/posts/:postId', async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { userId } = res.locals.user;
+    const { category, title, content } = req.body;
+
+    const modifyPost = await Posts.findOne({ where: { postId } });
+    if (!modifyPost) {
+      return res.status(404).json({ message: '해당 게시글을 찾을 수 없습니다.' });
+    } else if (!category || !title || !content) {
+      return res.status(400).json({ message: '카테고리, 제목, 내용을 입력해주세요.' });
+    } // else if (modifyPost.UserId !== userId) {
+    //return res.status(401).json({ message : "수정권한이 없습니다."})
+    else {
+      await Posts.update(
+        { category, title, content },
+        { where: { [Op.and]: [{ postId }, { UserId: userId }] } }
+      );
+      return res.status(201).json({
+        message: '게시글 수정 완료',
+      });
+    }
+  } catch {
+    return res.status(400).json({
+      message: '게시글 수정에 실패하였습니다.',
+    });
+  }
+});
+
+// 게시글 삭제
+// 수정과 마찬가지로 작성자에게만 보이는 버튼이라면 아래 주석 삭제
 router.delete('/posts/:postId', async (req, res) => {
   try {
     const { postId } = req.params;
     const { userId } = res.locals.user;
+    const deletePost = await Posts.findOne({ where: { postId } });
 
-    const deletePost = await Posts.findOne({
-      where: { postId: postId },
+    if (!deletePost) {
+      return res.status(404).json({ message: '해당 게시글을 찾을 수 없습니다.' });
+    } //else if (deletePost.UserId !== userId) {
+    //return res.status(400).json({ message : "삭제권한이 없습니다."})
+    else {
+      await Posts.destroy({
+        where: {
+          [Op.and]: [{ postId }, { UserId: userId }],
+        },
+      });
+      res.status(204).json();
+    }
+  } catch {
+    return res.status(400).json({
+      message: '게시글 삭제에 실패하였습니다.',
     });
-
-    if (!deletePost) return res.status(403).json({ message: '게시글 존재x' });
-    // 게시글 삭제하는 단계
-    await Posts.destroy({
-      where: {
-        // 어떤 데이터를 삭제할지
-        [Op.and]: [{ postId }, { UserId: userId }], // 게시글의 아이디와 유저아이디가 일치시 삭제
-      },
-    });
-    return res.status(204).json();
-  } catch (err) {
-    res.status(400).json({ error: '게시글 삭제에 실패하였습니다.' });
   }
 });
 

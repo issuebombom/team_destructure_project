@@ -45,6 +45,9 @@ module.exports = (sequelize, DataTypes) => {
       category: {
         type: DataTypes.STRING,
       },
+      refreshToken: {
+        type: DataTypes.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
