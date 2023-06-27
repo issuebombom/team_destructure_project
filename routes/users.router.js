@@ -2,9 +2,11 @@ const { Users } = require('../models');
 const errors = require('../assets/errors');
 const authMiddleware = require('../middleware/auth.middleware');
 const bcrypt = require('bcrypt');
+const express = require('express')
+const router = express.Router();
 
 // 회원가입
-const signup = async (req, res) => {
+router.post('/signup', async (req, res) => {
   const { nickname, email, password, confirm } = req.body;
 
   try {
@@ -47,10 +49,10 @@ const signup = async (req, res) => {
     console.error(err.name, ':', err.message);
     return res.status(400).send({ msg: `${err.message}` });
   }
-};
+});
 
 // 로그인
-const login = async (req, res) => {
+router.post('/login', async (req, res) => {
   const { nickname, password } = req.body;
   try {
     // 데이터베이스에서 유저 정보 조회
@@ -86,9 +88,10 @@ const login = async (req, res) => {
     console.error(err.name, ':', err.message);
     return res.status(400).send({ msg: `${err.message}` });
   }
-};
+});
 
-const logout = async (req, res) => {
+// 로그 아웃
+router.get('/logout/:userId', async (req, res) => {
   const userId = req.params.userId;
   const cookies = req.cookies;
 
@@ -108,7 +111,7 @@ const logout = async (req, res) => {
     console.error(err.name, ':', err.message);
     return res.status(400).send({ msg: `${err.message}` });
   }
-};
+});
 
 // // 미들웨어 테스트를 위해 임시로 만든 기능입니다. (추후 삭제 가능)
 // const getUser = async (req, res) => {
@@ -123,9 +126,4 @@ const logout = async (req, res) => {
 //   }
 // };
 
-module.exports = {
-  signup,
-  login,
-  logout,
-  // getUser,
-};
+module.exports = router;
