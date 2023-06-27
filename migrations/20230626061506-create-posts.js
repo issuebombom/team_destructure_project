@@ -13,6 +13,14 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      Nickname: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        references: {
+          model: 'Users',
+          key: 'nickname',
+        },
+      },
       title: {
         type: Sequelize.STRING,
         allowNull: false,
