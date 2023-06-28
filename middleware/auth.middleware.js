@@ -39,7 +39,7 @@ function verifyAccessToken(req, res, next) {
       console.error(err.name, ':', err.message);
     }
     // req.user = user; // 토큰이 만료될 경우 user는 undefined가 된다.
-    req.accessTokenInfo = jwt.decode(accessToken); // 페이로드 전달
+    req.user = jwt.decode(accessToken); // 페이로드 전달
     next();
   });
 }
@@ -84,6 +84,8 @@ async function replaceAccessToken(req, res, next) {
       return res.status(400).send({ msg: `${err.message}` });
     }
   }
+  res.locals.user = req.user;
+  // console.log(res.locals.user);
   next();
 }
 
