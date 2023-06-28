@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
         sourceKey: 'userId',
         foreignKey: 'UserId',
       });
+
+      this.hasMany(models.Likes, {
+        sourceKey: 'userId',
+        foreignKey: 'UserId',
+      });
     }
   }
   Users.init(
@@ -42,7 +47,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
       },
-      category: {
+      interest: {
+        type: DataTypes.STRING,
+      },
+      refreshToken: {
         type: DataTypes.STRING,
       },
       createdAt: {

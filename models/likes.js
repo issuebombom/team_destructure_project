@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Posts extends Model {
+  class Likes extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -14,25 +14,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'UserId',
       });
 
-      this.hasMany(models.Comments, {
-        sourceKey: 'postId',
-        foreignKey: 'PostId',
-      });
-
-      this.hasMany(models.Categorys, {
+      this.belongsTo(models.Posts, {
         targetKey: 'postId',
-        foreignKey: 'PostId',
-      });
-
-      this.hasMany(models.Likes, {
-        sourceKey: 'postId',
         foreignKey: 'PostId',
       });
     }
   }
-  Posts.init(
+  Likes.init(
     {
-      postId: {
+      likeId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -40,42 +30,27 @@ module.exports = (sequelize, DataTypes) => {
       },
       UserId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
-      Nickname: {
-        allowNull: false,
-        type: DataTypes.STRING,
+      PostId: {
+        type: DataTypes.INTEGER,
       },
-      title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      content: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      categoryList: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      img: {
-        type: DataTypes.STRING,
+      likes: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
       },
       createdAt: {
         allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+        type: DataTypes.NOW,
       },
       updatedAt: {
         allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+        type: DataTypes.NOW,
       },
     },
     {
       sequelize,
-      modelName: 'Posts',
+      modelName: 'Likes',
     }
   );
-  return Posts;
+  return Likes;
 };

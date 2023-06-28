@@ -23,7 +23,10 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      category: {
+      interest: {
+        type: Sequelize.STRING,
+      },
+      refreshToken: {
         type: Sequelize.STRING,
       },
       createdAt: {
