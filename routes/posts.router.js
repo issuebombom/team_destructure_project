@@ -128,6 +128,31 @@ router.get('/posts/:postId', async (req, res) => {
   }
 });
 
+// 게시글 검색 기능
+router.get('/lookup', async (req, res) => {
+  try {
+    const { search } = req.query;
+    if (!search) {
+      return res.status(400).json({
+        message: '검색어를 입력해주세요.',
+      });
+    }
+
+    const searchPost = await Posts.findAll({
+      attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content', 'img'],
+      where: { title: { [Op.like]: `%${search}%` } },
+    });
+
+    return res.status(200).json({
+      searchPost,
+    });
+  } catch {
+    return res.status(400).json({
+      message: '게시글 검색에 실패하였습니다.',
+    });
+  }
+});
+
 // 게시글 수정
 router.put('/posts/:postId', verifyAccessToken, async (req, res) => {
   try {
