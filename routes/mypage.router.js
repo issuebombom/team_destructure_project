@@ -1,64 +1,35 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const Mypage = require('../models/mypage.js');
 const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.middleware.js');
-const Users = require('../models/users.js');
-const Posts = require('../models/posts.js');
+const { Users } = require('../models');
+const { Posts } = require('../models');
 const Comments = require('../models/comments.js');
 const router = express.Router();
 
-router.get('/mypage', (req, res) => {
+router.get('/mypage', async (req, res) => {
+  const post = await Users.findOne({ where: { userId: 3 } });
+  // console.log(post);
   res.status(200).json({ msg: '연결 완료' });
 });
 
 // 유저 정보 조회
 router.get('/mypage/:userId', verifyAccessToken, replaceAccessToken, async (req, res) => {
   const { userId } = req.params;
-  // console.log(req.params);
-  const user = await Users.findByPk(userId);
-  console.log(user);
-  const writtenPosts = await Posts.findAll({ where: { userId: userId } });
-  console.log(writtenPosts);
-  const writtenComments = await Comments.findAll({ where: { userId: userId } });
-  console.log(writtenComments);
-
+  const userData2 = res.locals.user;
   try {
-    // if (!user) {
-    //   return res.status(412).json({ errorMessage: '해당하는 유저는 존재하지 않습니다.' });
-    // }
-    // if (!writtenPosts && !writtenComments) {
-    //   alert('현재 게시된 게시물과 댓글이 없습니다.');
-    // }
-    const userData = {
-      userDetail: user.map((a) => {
-        return {
-          userId: a.userId,
-          nickname: a.nickname,
-          email: a.email,
-          password: a.password,
-        };
-      }),
-    };
-    // const writtenPostsData = {
-    //   writtenPosts: writtenPosts.map((b) => {
-    //     return {
-    //       postId: b.postId,
-    //       title: b.title,
-    //       content: b.content,
-    //     };
-    //   }),
-    // };
-    // const writtenCommentsData = {
-    //   writtenComments: writtenComments.map((c) => {
-    //     return {
-    //       commentId: c.commentId,
-    //       content: c.content,
-    //     };
-    //   }),
-    // };
-    res.status(200).json(userData);
-  } catch {
-    // , writtenPostsData, writtenCommentsData
+    if (!userId) {
+      return res.status(401).json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
+    }
+    if (userId === String(userData2.userId)) {
+      const user = await Users.findOne({ where: { userId } });
+      return res
+        .status(200)
+        .json({ nickname: user.nickname, password: user.password, email: user.email });
+    } else {
+      return res.status(401).json({ errorMessage: '회원 정보를 찾을수 없습니다.' });
+    }
+  } catch (err) {
+    res.status(400).json({ errorMessage: '유저 정보 조회에 실패하였습니다.' });
   }
 });
 

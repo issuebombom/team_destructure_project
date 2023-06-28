@@ -9,33 +9,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      UserId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Users',
-          key: 'userId',
-        },
-      },
       PostId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'Posts',
           key: 'postId',
         },
       },
-      restaurants: {
-        type: Sequelize.STRING,
-      },
-      game: {
-        type: Sequelize.STRING,
-      },
-      trade: {
-        type: Sequelize.STRING,
-      },
-      exercise: {
-        type: Sequelize.STRING,
-      },
-      music: {
+      categoryList: {
         type: Sequelize.STRING,
       },
       createdAt: {

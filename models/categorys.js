@@ -9,11 +9,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Users, {
-        targetKey: 'userId',
-        foreignKey: 'UserId',
-      });
-
       this.belongsTo(models.Posts, {
         targetKey: 'postId',
         foreignKey: 'PostId',
@@ -28,25 +23,11 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      UserId: {
-        type: DataTypes.INTEGER,
-      },
       PostId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
       },
-      restaurants: {
-        type: DataTypes.STRING,
-      },
-      game: {
-        type: DataTypes.STRING,
-      },
-      trade: {
-        type: DataTypes.STRING,
-      },
-      exercise: {
-        type: DataTypes.STRING,
-      },
-      music: {
+      categoryList: {
         type: DataTypes.STRING,
       },
       createdAt: {

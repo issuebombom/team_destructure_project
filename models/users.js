@@ -19,11 +19,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'UserId',
       });
 
-      this.hasOne(models.Categorys, {
-        sourceKey: 'userId',
-        foreignKey: 'UserId',
-      });
-
       this.hasMany(models.Likes, {
         sourceKey: 'userId',
         foreignKey: 'UserId',
@@ -52,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
       },
-      category: {
+      interest: {
         type: DataTypes.STRING,
       },
       refreshToken: {
