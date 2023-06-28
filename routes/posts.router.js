@@ -1,47 +1,42 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { Posts, Categorys } = require('../models');
+const { Posts, Categories } = require('../models');
 const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
 // 게시글 작성
-router.post(
-  '/posts',
-  verifyAccessToken,
-  uploadMiddleware.single('file'),
-  async (req, res) => {
-    try {
-      const userId = res.locals.user;
-      const filepath = req.file ? req.file.location : null;
-      const { categoryList, title, content } = req.body;
+router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async (req, res) => {
+  try {
+    const userId = res.locals.user;
+    const filepath = req.file ? req.file.location : null;
+    const { categoryList, title, content } = req.body;
 
-      if (!title || !content) {
-        res.status(412).json({
-          message: '제목 또는 내용을 입력해주세요',
-        });
-        return;
-      }
-
-      await Posts.create({
-        UserId: userId.userId,
-        Nickname: userId.nickname,
-        categoryList,
-        title,
-        content,
-        img: filepath,
+    if (!title || !content) {
+      res.status(412).json({
+        message: '제목 또는 내용을 입력해주세요',
       });
-
-      res.status(201).json({
-        message: '게시글 생성완료',
-      });
-    } catch {
-      return res.status(412).json({
-        message: '데이터 형식이 올바르지 않아 생성에 실패했습니다.',
-      });
+      return;
     }
+
+    await Posts.create({
+      UserId: userId.userId,
+      Nickname: userId.nickname,
+      categoryList,
+      title,
+      content,
+      img: filepath,
+    });
+
+    res.status(201).json({
+      message: '게시글 생성완료',
+    });
+  } catch {
+    return res.status(412).json({
+      message: '데이터 형식이 올바르지 않아 생성에 실패했습니다.',
+    });
   }
-);
+});
 
 // 최신 게시글 조회 API
 // res는 추후 수정필요 (하나의 파일로 관리하여 오류메세지 통일)
@@ -69,33 +64,29 @@ router.get('/posts', async (req, res) => {
 });
 
 // 관심사 게시글 조회
-router.get(
-  '/posts/category/:categoryList',
-  verifyAccessToken,
-  async (req, res) => {
-    try {
-      const { categoryList } = req.params;
-      const userId = res.locals.user;
-      console.log(userId);
-      if (!categoryList) {
-        return res.status(404).json({
-          message: '설정된 관심사가 없습니다. 마이페이지에서 관심사를 등록해주세요.',
-        });
-      }
-
-      // const interests = await Categorys.findAll({ where: { categoryList } });
-      // if (userId.interest === categoryList) {
-      res.status(200).json({
-        Posts: interests,
-      });
-      // }
-    } catch {
-      return res.status(400).json({
-        message: '게시글 조회에 실패하였습니다.',
+router.get('/posts/category/:categoryList', verifyAccessToken, async (req, res) => {
+  try {
+    const { categoryList } = req.params;
+    const userId = res.locals.user;
+    console.log(userId);
+    if (!categoryList) {
+      return res.status(404).json({
+        message: '설정된 관심사가 없습니다. 마이페이지에서 관심사를 등록해주세요.',
       });
     }
+
+    // const interests = await Categories.findAll({ where: { categoryList } });
+    // if (userId.interest === categoryList) {
+    res.status(200).json({
+      Posts: interests,
+    });
+    // }
+  } catch {
+    return res.status(400).json({
+      message: '게시글 조회에 실패하였습니다.',
+    });
   }
-);
+});
 
 // 게시글 상세 조회
 router.get('/posts/:postId', async (req, res) => {
