@@ -6,34 +6,35 @@ const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.mi
 // 게시글 작성
 // img 경로에 대한 확인이 필요
 router.post('/posts', verifyAccessToken, replaceAccessToken, async (req, res) => {
-  try {
-    const userId = res.locals.user;
+  // try {
+  const userId = res.locals.user;
 
-    const { category, title, content } = req.body;
-
-    if (!title || !content) {
-      res.status(412).json({
-        message: '제목 또는 내용을 입력해주세요',
-      });
-      return;
-    }
-
-    await Posts.create({
-      UserId: userId.userId,
-      Nickname: userId.nickname,
-      category,
-      title,
-      content,
+  const { category, title, content } = req.body;
+  console.log(userId);
+  if (!title || !content) {
+    res.status(412).json({
+      message: '제목 또는 내용을 입력해주세요',
     });
 
-    res.status(201).json({
-      message: '게시글 생성완료',
-    });
-  } catch {
-    return res.status(412).json({
-      message: '데이터 형식이 올바르지 않아 생성에 실패했습니다.',
-    });
+    return;
   }
+
+  await Posts.create({
+    UserId: userId.userId,
+    Nickname: userId.nickname,
+    category,
+    title,
+    content,
+  });
+
+  res.status(201).json({
+    message: '게시글 생성완료',
+  });
+  // } catch {
+  //   return res.status(412).json({
+  //     message: '데이터 형식이 올바르지 않아 생성에 실패했습니다.',
+  //   });
+  // }
 });
 
 // 최신 게시글 조회 API

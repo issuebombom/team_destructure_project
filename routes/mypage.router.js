@@ -1,6 +1,6 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const Mypage = require('../models/mypage.js');
+
 const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.middleware.js');
 const Users = require('../models/users.js');
 const Posts = require('../models/posts.js');

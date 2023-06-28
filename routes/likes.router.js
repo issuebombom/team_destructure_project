@@ -9,10 +9,6 @@ const router = express.Router();
 // 게시글 좋아요 API
 router.post('/posts/:postId/like', async (req, res) => {
   try {
-    const { title, content } = req.body;
-    const { postId } = req.params;
-    const { userId } = res.locals.user;
-
     const like = new Likes({});
   } catch (error) {}
 });
