@@ -19,13 +19,18 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
       return;
     }
 
-    await Posts.create({
+    const post = await Posts.create({
       UserId: userId.userId,
       Nickname: userId.nickname,
       categoryList,
       title,
       content,
       img: filepath,
+    });
+
+    await Categories.create({
+      PostId: post.postId,
+      categoryList,
     });
 
     res.status(201).json({
@@ -64,23 +69,23 @@ router.get('/posts', async (req, res) => {
 });
 
 // 관심사 게시글 조회
-router.get('/posts/category/:categoryList', verifyAccessToken, async (req, res) => {
+router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
   try {
-    const { categoryList } = req.params;
     const userId = res.locals.user;
-    console.log(userId);
-    if (!categoryList) {
+
+    if (!userId.interest) {
       return res.status(404).json({
         message: '설정된 관심사가 없습니다. 마이페이지에서 관심사를 등록해주세요.',
       });
     }
-
-    // const interests = await Categories.findAll({ where: { categoryList } });
-    // if (userId.interest === categoryList) {
-    res.status(200).json({
-      Posts: interests,
+    const categoryPosts = await Posts.findAll({
+      attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content', 'img'],
+      where: { categoryList: userId.interest },
     });
-    // }
+
+    return res.status(200).json({
+      categoryPosts,
+    });
   } catch {
     return res.status(400).json({
       message: '게시글 조회에 실패하였습니다.',
@@ -124,8 +129,7 @@ router.get('/posts/:postId', async (req, res) => {
 });
 
 // 게시글 수정
-// 수정&삭제버튼은 작성자에게만 보이는 기능인지?  있다면 아래 주석 삭제
-router.put('/posts/:postId', async (req, res) => {
+router.put('/posts/:postId', verifyAccessToken, async (req, res) => {
   try {
     const { postId } = req.params;
     const { userId } = res.locals.user;
@@ -136,9 +140,7 @@ router.put('/posts/:postId', async (req, res) => {
       return res.status(404).json({ message: '해당 게시글을 찾을 수 없습니다.' });
     } else if (!categoryList || !title || !content) {
       return res.status(400).json({ message: '카테고리, 제목, 내용을 입력해주세요.' });
-    } // else if (modifyPost.UserId !== userId) {
-    //return res.status(401).json({ message : "수정권한이 없습니다."})
-    else {
+    } else {
       await Posts.update(
         { categoryList, title, content },
         { where: { [Op.and]: [{ postId }, { UserId: userId }] } }
@@ -156,7 +158,7 @@ router.put('/posts/:postId', async (req, res) => {
 
 // 게시글 삭제
 // 수정과 마찬가지로 작성자에게만 보이는 버튼이라면 아래 주석 삭제
-router.delete('/posts/:postId', async (req, res) => {
+router.delete('/posts/:postId', verifyAccessToken, async (req, res) => {
   try {
     const { postId } = req.params;
     const { userId } = res.locals.user;
@@ -164,9 +166,7 @@ router.delete('/posts/:postId', async (req, res) => {
 
     if (!deletePost) {
       return res.status(404).json({ message: '해당 게시글을 찾을 수 없습니다.' });
-    } //else if (deletePost.UserId !== userId) {
-    //return res.status(400).json({ message : "삭제권한이 없습니다."})
-    else {
+    } else {
       await Posts.destroy({
         where: {
           [Op.and]: [{ postId }, { UserId: userId }],
