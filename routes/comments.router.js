@@ -2,7 +2,7 @@ const express = require('express');
 const { Users, Comments } = require('../models');
 const router = express.Router();
 const errors = require('../assets/errors.js');
-const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.middleware');
+const { verifyAccessToken } = require('../middleware/auth.middleware');
 
 //댓글 불러오기
 router.get('/posts/:postId/comments', async (req, res) => {
@@ -29,7 +29,7 @@ router.get('/posts/:postId/comments', async (req, res) => {
 });
 
 //댓글 작성
-router.post('/posts/:postId/comments', verifyAccessToken, replaceAccessToken, async (req, res) => {
+router.post('/posts/:postId/comments', verifyAccessToken, async (req, res) => {
   const PostId = req.params.postId;
   const UserId = res.locals.user.userId;
   const content = req.body.content;
@@ -46,7 +46,7 @@ router.post('/posts/:postId/comments', verifyAccessToken, replaceAccessToken, as
 router.put(
   '/posts/:postId/comments/:commentId',
   verifyAccessToken,
-  replaceAccessToken,
+
   async (req, res) => {
     const { commentId } = req.params;
     const { content } = req.body;
@@ -63,7 +63,7 @@ router.put(
 );
 
 //댓글 삭제
-router.delete('/posts/:postId/comments/:commentId', verifyAccessToken, replaceAccessToken, async (req, res) => {
+router.delete('/posts/:postId/comments/:commentId', verifyAccessToken, async (req, res) => {
   const { commentId } = req.params;
   const { userId } = res.locals.user;
 

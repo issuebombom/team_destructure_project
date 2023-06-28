@@ -2,8 +2,6 @@ require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const express = require('express');
 
-const { verifyAccessToken, replaceAccessToken } = require('./middleware/auth.middleware');
-
 const usersRouter = require('./routes/users.router');
 const postsRouter = require('./routes/posts.router');
 const uploadRouter = require('./routes/upload.router');

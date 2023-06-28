@@ -1,6 +1,6 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.middleware.js');
+const { verifyAccessToken } = require('../middleware/auth.middleware.js');
 const { Users } = require('../models');
 const { Posts } = require('../models');
 const { Comments } = require('../models');
@@ -14,7 +14,7 @@ const router = express.Router();
 // });
 
 // 유저 정보 조회
-router.get('/mypage/:userId', verifyAccessToken, replaceAccessToken, async (req, res) => {
+router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
   const { userId } = req.params;
   const userData = res.locals.user;
   try {
@@ -42,8 +42,8 @@ router.get('/mypage/:userId', verifyAccessToken, replaceAccessToken, async (req,
   }
 });
 
-// 유저 정보 수정 nickname password email interest
-router.put('/mypage/:userId', verifyAccessToken, replaceAccessToken, async (req, res) => {
+// 유저 정보 수정
+router.put('/mypage/:userId', verifyAccessToken, async (req, res) => {
   const { userId } = req.params;
   const userData = res.locals.user;
   console.log(userData); // 정상 출력

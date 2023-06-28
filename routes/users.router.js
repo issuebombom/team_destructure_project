@@ -1,4 +1,4 @@
-const { Users } = require('../models');
+const { Users, Categories } = require('../models');
 const errors = require('../assets/errors');
 const authMiddleware = require('../middleware/auth.middleware');
 const bcrypt = require('bcrypt');
@@ -17,14 +17,17 @@ router.post('/signup', async (req, res) => {
     // 닉네임 고유값에 대한 검증을 합니다.
     if (user) return res.status(errors.existUser.status).send({ msg: errors.existUser.msg });
 
-    // NOTE: 닉네임에 특수문자 공백을 허용하지 않습니다. 작업 해야함
+    // 닉네임에 영문 대소문자, 숫자만 허용합니다.
+    let re = new RegExp(/^[a-zA-Z0-9]+$/);
+    if (!re.test(nickname))
+      return res.status(errors.validNickname.status).send({ msg: errors.validNickname.msg });
 
     // 패스워드와 패스워드 확인이 일치하는지 검증
     if (password !== confirm)
       return res.status(errors.passwordDiff.status).send({ msg: errors.passwordDiff.msg });
 
     // 닉네임 패턴 비밀번호 적용 유무를 검증
-    const re = new RegExp(nickname, 'i');
+    re = new RegExp(nickname, 'i');
     if (re.test(password))
       return res.status(errors.nameInPassword.status).send({ msg: errors.nameInPassword.msg });
 
@@ -33,7 +36,12 @@ router.post('/signup', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // 계정 생성
-    const userCreateResult = await Users.create({ nickname, email, password: hashedPassword });
+    const userCreateResult = await Users.create({
+      nickname,
+      email,
+      password: hashedPassword,
+      interest,
+    });
     res.send({
       result: {
         message: '회원가입이 완료되었습니다.',
