@@ -7,7 +7,7 @@ const router = express.Router();
 
 // 회원가입
 router.post('/signup', async (req, res) => {
-  const { nickname, email, password, confirm } = req.body;
+  const { nickname, email, password, confirm, interest } = req.body;
 
   try {
     const user = await Users.findOne({
@@ -41,6 +41,7 @@ router.post('/signup', async (req, res) => {
         nickname,
         password: hashedPassword,
         confirm,
+        interest,
         email,
       },
     });
