@@ -38,6 +38,7 @@ function verifyAccessToken(req, res, next) {
       req.expired = true;
       console.error(err.name, ':', err.message);
     }
+    // req.user = user; // 토큰이 만료될 경우 user는 undefined가 된다.
     req.user = jwt.decode(accessToken); // 페이로드 전달
     next();
   });
@@ -48,11 +49,11 @@ async function replaceAccessToken(req, res, next) {
   if (req.expired) {
     try {
       // DB에 저장된 리프레시 토큰 확인
-      const user = await Users.findByPk(req.user.userId);
+      const user = await Users.findByPk(req.accessTokenInfo.userId);
       const innerDatabaseRefreshToken = user.refreshToken;
 
       // 엑세스 토큰에 저장된 리프레시 토큰 확인
-      const innerCookieRefreshToken = req.user.refreshToken;
+      const innerCookieRefreshToken = req.accessTokenInfo.refreshToken;
 
       // 토큰 일치 여부 확인
       if (innerDatabaseRefreshToken !== innerCookieRefreshToken)
@@ -83,7 +84,8 @@ async function replaceAccessToken(req, res, next) {
       return res.status(400).send({ msg: `${err.message}` });
     }
   }
-  res.locals.user = req.user
+  res.locals.user = req.user;
+  // console.log(res.locals.user);
   next();
 }
 

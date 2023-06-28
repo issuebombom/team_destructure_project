@@ -137,7 +137,7 @@ router.get('/posts/:postId', async (req, res) => {
 
 // 게시글 수정
 // 수정&삭제버튼은 작성자에게만 보이는 기능인지?  있다면 아래 주석 삭제
-router.put('/posts/:postId', verifyAccessToken, replaceAccessToken, async (req, res) => {
+router.put('/posts/:postId', async (req, res) => {
   try {
     const { postId } = req.params;
     const { userId } = res.locals.user;
@@ -168,7 +168,7 @@ router.put('/posts/:postId', verifyAccessToken, replaceAccessToken, async (req, 
 
 // 게시글 삭제
 // 수정과 마찬가지로 작성자에게만 보이는 버튼이라면 아래 주석 삭제
-router.delete('/posts/:postId', verifyAccessToken, replaceAccessToken, async (req, res) => {
+router.delete('/posts/:postId', async (req, res) => {
   try {
     const { postId } = req.params;
     const { userId } = res.locals.user;
