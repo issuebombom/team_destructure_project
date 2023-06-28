@@ -1,48 +1,56 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { Posts } = require('../models');
+const { Posts, Categorys } = require('../models');
 const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.middleware');
+const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
 // 게시글 작성
 // img 경로에 대한 확인이 필요
-router.post('/posts', verifyAccessToken, replaceAccessToken, async (req, res) => {
-  // try {
-  const userId = res.locals.user;
-  console.log(userId.nickname);
-  const { category, title, content } = req.body;
+router.post(
+  '/posts',
+  verifyAccessToken,
+  replaceAccessToken,
+  uploadMiddleware.single('file'),
+  async (req, res) => {
+    try {
+      const userId = res.locals.user;
+      const filepath = req.file ? req.file.location : null;
+      const { categoryList, title, content } = req.body;
 
-  if (!title || !content) {
-    res.status(412).json({
-      message: '제목 또는 내용을 입력해주세요',
-    });
-    return;
+      if (!title || !content) {
+        res.status(412).json({
+          message: '제목 또는 내용을 입력해주세요',
+        });
+        return;
+      }
+
+      await Posts.create({
+        UserId: userId.userId,
+        Nickname: userId.nickname,
+        categoryList,
+        title,
+        content,
+        img: filepath,
+      });
+
+      res.status(201).json({
+        message: '게시글 생성완료',
+      });
+    } catch {
+      return res.status(412).json({
+        message: '데이터 형식이 올바르지 않아 생성에 실패했습니다.',
+      });
+    }
   }
-
-  await Posts.create({
-    UserId: userId.userId,
-    Nickname: userId.nickname,
-    category,
-    title,
-    content,
-  });
-
-  res.status(201).json({
-    message: '게시글 생성완료',
-  });
-  // } catch {
-  //   return res.status(412).json({
-  //     message: '데이터 형식이 올바르지 않아 생성에 실패했습니다.',
-  //   });
-  // }
-});
+);
 
 // 최신 게시글 조회 API
 // res는 추후 수정필요 (하나의 파일로 관리하여 오류메세지 통일)
 router.get('/posts', async (req, res) => {
   try {
     const postList = await Posts.findAll({
-      attributes: ['nickname', 'category', 'title', 'content'],
+      attributes: ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'],
       order: [['createdAt', 'DESC']],
     });
 
@@ -63,28 +71,34 @@ router.get('/posts', async (req, res) => {
 });
 
 // 관심사 게시글 조회
-router.get('/posts/category/:category', verifyAccessToken, replaceAccessToken, async (req, res) => {
-  try {
-    const { category } = req.params;
-    // userId.category와 DB에서찾아온 category값을 비교하여 맞는 데이터를 출력해주는 느낌으로
-    // const { userId } = res.locals.user;
-    if (!category) {
-      return res.status(404).json({
-        message: '설정된 관심사가 없습니다. 마이페이지에서 관심사를 등록해주세요.',
+router.get(
+  '/posts/category/:categoryList',
+  verifyAccessToken,
+  replaceAccessToken,
+  async (req, res) => {
+    try {
+      const { categoryList } = req.params;
+      const userId = res.locals.user;
+      console.log(userId);
+      if (!categoryList) {
+        return res.status(404).json({
+          message: '설정된 관심사가 없습니다. 마이페이지에서 관심사를 등록해주세요.',
+        });
+      }
+
+      // const interests = await Categorys.findAll({ where: { categoryList } });
+      // if (userId.interest === categoryList) {
+      res.status(200).json({
+        Posts: interests,
+      });
+      // }
+    } catch {
+      return res.status(400).json({
+        message: '게시글 조회에 실패하였습니다.',
       });
     }
-
-    const interests = await Posts.findAll({ where: { category } });
-
-    res.status(200).json({
-      interests: interests,
-    });
-  } catch {
-    return res.status(400).json({
-      message: '게시글 조회에 실패하였습니다.',
-    });
   }
-});
+);
 
 // 게시글 상세 조회
 router.get('/posts/:postId', async (req, res) => {
@@ -94,7 +108,7 @@ router.get('/posts/:postId', async (req, res) => {
       attributes: [
         'postId',
         'userId',
-        'category',
+        'categoryList',
         'nickname',
         'title',
         'content',
@@ -127,18 +141,18 @@ router.put('/posts/:postId', verifyAccessToken, replaceAccessToken, async (req, 
   try {
     const { postId } = req.params;
     const { userId } = res.locals.user;
-    const { category, title, content } = req.body;
+    const { categoryList, title, content } = req.body;
 
     const modifyPost = await Posts.findOne({ where: { postId } });
     if (!modifyPost) {
       return res.status(404).json({ message: '해당 게시글을 찾을 수 없습니다.' });
-    } else if (!category || !title || !content) {
+    } else if (!categoryList || !title || !content) {
       return res.status(400).json({ message: '카테고리, 제목, 내용을 입력해주세요.' });
     } // else if (modifyPost.UserId !== userId) {
     //return res.status(401).json({ message : "수정권한이 없습니다."})
     else {
       await Posts.update(
-        { category, title, content },
+        { categoryList, title, content },
         { where: { [Op.and]: [{ postId }, { UserId: userId }] } }
       );
       return res.status(201).json({
