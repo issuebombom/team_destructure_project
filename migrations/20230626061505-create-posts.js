@@ -12,6 +12,11 @@ module.exports = {
       UserId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'userId',
+        },
+        onDelete: 'CASCADE',
       },
       Nickname: {
         allowNull: false,
@@ -29,7 +34,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      category: {
+      categoryList: {
         type: Sequelize.STRING,
         allowNull: false,
       },

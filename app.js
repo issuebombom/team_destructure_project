@@ -5,6 +5,7 @@ const { verifyAccessToken, replaceAccessToken } = require('./middleware/auth.mid
 
 const usersRouter = require('./routes/users.router');
 const postsRouter = require('./routes/posts.router');
+const uploadRouter = require('./routes/upload.router');
 const mypageRouter = require('./routes/mypage.router');
 // const commentsRouter = require('./routes/comments.router');
 
@@ -15,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser()); // npm i cookie-parser
 
-app.use('/', [usersRouter, postsRouter, mypageRouter]);
+app.use('/', [usersRouter, postsRouter, mypageRouter, uploadRouter]);
 
 app.listen(PORT, HOST, () => {
   console.log('Server is listening...', PORT);

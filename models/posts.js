@@ -19,8 +19,8 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'PostId',
       });
 
-      this.hasOne(models.Categorys, {
-        sourceKey: 'postId',
+      this.hasMany(models.Categorys, {
+        targetKey: 'postId',
         foreignKey: 'PostId',
       });
 
@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      category: {
+      categoryList: {
         type: DataTypes.STRING,
         allowNull: false,
       },
