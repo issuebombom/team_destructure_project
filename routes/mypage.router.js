@@ -5,22 +5,26 @@ const { Users, Posts, Comments } = require('../models');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
-// URI 연결 확인 코드
-// router.get('/mypage', async (req, res) => {
-//   const post = await Users.findOne({ where: { userId: 3 } });
-//   console.log(post); // 연결 확인 콘솔
-//   res.status(200).json({ msg: '연결 완료' });
-// });
-// 유저 정보 조회
+// 유저 정보 조회 (유저정보 + 게시글 + 댓글)
 router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
   const { userId } = req.params;
   const userData = res.locals.user;
+
   try {
-    if (!userId) {
-      return res.status(401).json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
-    }
     if (userId === String(userData.userId)) {
-      const user = await Users.findOne({ where: { userId } }); // 유저 정보 조회
+      // 유저 정보 조회
+      const user = await Users.findOne({
+        attributes: [
+          'nickname',
+          'password',
+          'email',
+          'interest',
+          [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date'],
+        ],
+        where: { userId },
+      });
+
+      // 유저의 게시글 조회
       const post = await Posts.findAll({
         attributes: [
           'title',
@@ -28,16 +32,17 @@ router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
           [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date'],
         ],
         where: { UserId: userId },
-      }); // 유저의 게시글 조회
+      });
+
+      // 유저의 댓글 조회
       const comment = await Comments.findAll({
         attributes: ['content', [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date']],
         where: { UserId: userId },
-      }); // 유저의 댓글 조회
+      });
+
+      // 유저 정보 조회
       return res.status(200).json({
-        nickname: user.nickname,
-        password: user.password,
-        email: user.email,
-        interest: user.interest,
+        user,
         posts: post,
         comments: comment,
       });
@@ -52,32 +57,40 @@ router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
 // 유저 정보 수정
 router.put('/mypage/:userId', verifyAccessToken, async (req, res) => {
   const { userId } = req.params;
+  const { nickname, afterPassword, confirm, interest } = req.body;
   const userData = res.locals.user;
-  const { nickname, password, confirm, interest } = req.body;
+  // 비밀번호 해쉬화
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(afterPassword, saltRounds);
+  const { password } = await Users.findOne({ where: { userId } });
+
+  // console.log(password); // Users 모델에 저장되어 있는 userId의 패스워드
+  // console.log(hashedPassword); // 바디에 입력받은 password를 단방향 암호화 시킨것
+  const match = await bcrypt.compare(afterPassword, password);
+
   try {
-    if (!userId) {
-      return res.status(401).json({ errorMessage: '데이터 형식이 올바르지 않습니다.' }); // 실패
-    }
+    // nickname 체크
     if (nickname === '' || nickname === undefined) {
-      return res.status(412).json({ errorMessage: '닉네임의 형식이 올바르지 않습니다.' }); // 확인완료
+      return res.status(412).json({ errorMessage: '닉네임의 형식이 올바르지 않습니다.' });
     }
-    if (password === '' || password === undefined) {
-      return res.status(412).json({ errorMessage: '비밀번호의 형식이 올바르지 않습니다.' }); // 확인완료
+    // afterPassword 체크
+    if (afterPassword === '' || afterPassword === undefined) {
+      return res.status(412).json({ errorMessage: '비밀번호의 형식이 올바르지 않습니다.' });
     }
+    // interest 체크
     if (interest === '' || interest === undefined) {
-      return res.status(412).json({ errorMessage: '관심사의 형식이 올바르지 않습니다.' }); // 확인완료
+      return res.status(412).json({ errorMessage: '관심사의 형식이 올바르지 않습니다.' });
     }
-    if (password !== confirm) {
+    // afterPassword 일치 확인
+    if (afterPassword !== confirm) {
       return res
         .status(401)
-        .json({ errorMessage: '변경하고자 하는 비밀번호가 일치하지 않습니다.' }); // 확인완료
+        .json({ errorMessage: '변경하고자 하는 비밀번호가 일치하지 않습니다.' });
     }
-    if (String(userData.password) === String(password)) {
-      return res.status(401).json({ errorMessage: '새로운 비밀번호를 입력해주세요.' }); // 현재 진행 중
+    // 이전 password와 변경할 password가 같은 값인지 확인.
+    if (match) {
+      return res.status(401).json({ errorMessage: '새로운 비밀번호를 입력해주세요.' });
     }
-    // 비밀번호 해시화
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
     await Users.update(
       { nickname, password: hashedPassword, interest }, // 변경하고자 하는 컬럼 및 데이터
       {
