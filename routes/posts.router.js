@@ -1,16 +1,14 @@
 const express = require('express');
 const { Op } = require('sequelize');
 const { Posts, Categorys } = require('../models');
-const { verifyAccessToken, replaceAccessToken } = require('../middleware/auth.middleware');
+const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
 // 게시글 작성
-// img 경로에 대한 확인이 필요
 router.post(
   '/posts',
   verifyAccessToken,
-  replaceAccessToken,
   uploadMiddleware.single('file'),
   async (req, res) => {
     try {
@@ -74,7 +72,6 @@ router.get('/posts', async (req, res) => {
 router.get(
   '/posts/category/:categoryList',
   verifyAccessToken,
-  replaceAccessToken,
   async (req, res) => {
     try {
       const { categoryList } = req.params;
