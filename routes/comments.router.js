@@ -32,8 +32,8 @@ router.get('/posts/:postId/comments', async (req, res) => {
 router.post('/posts/:postId/comments', verifyAccessToken, async (req, res) => {
   const PostId = req.params.postId;
   const UserId = res.locals.user.userId;
-  const content = req.body.content;
-
+  const { content } = req.body;
+  console.log(content);
   try {
     await Comments.create({ content, PostId, UserId });
     res.status(200).json({ message: '댓글 작성 완료' });
