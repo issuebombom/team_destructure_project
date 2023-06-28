@@ -114,17 +114,4 @@ router.get('/logout/:userId', async (req, res) => {
   }
 });
 
-// // 미들웨어 테스트를 위해 임시로 만든 기능입니다. (추후 삭제 가능)
-// const getUser = async (req, res) => {
-//   try {
-//     const userId = req.params.userId;
-//     const findUser = await Users.findByPk(userId);
-
-//     res.send(findUser);
-//   } catch (err) {
-//     console.error(err.name, ':', err.message);
-//     return res.status(400).send({ msg: `${err.message}` });
-//   }
-// };
-
 module.exports = router;
