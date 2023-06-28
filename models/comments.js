@@ -28,14 +28,14 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      PostId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      UserId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
+      // PostId: {
+      //   type: DataTypes.INTEGER,
+      //   allowNull: false,
+      // },
+      // UserId: {
+      //   type: DataTypes.INTEGER,
+      //   allowNull: false,
+      // },
       content: {
         type: DataTypes.STRING,
         allowNull: false,

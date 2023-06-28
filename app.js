@@ -1,7 +1,8 @@
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const express = require('express');
-const postsRouter = require('./routes/post.route');
+const postsRouter = require('./routes/post.router');
+const commentsRouter = require('./routes/comment.router.js')
 
 const HOST = '127.0.0.1';
 const PORT = 3000;
@@ -18,6 +19,7 @@ app.use(cookieParser()); // npm i cookie-parser
 // app.use('/users', usersRouter);
 // app.use('/auth', authorizationRouter);
 app.use('/', [postsRouter]);
+app.use('/', [commentsRouter])
 
 // 예시
 
