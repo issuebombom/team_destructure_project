@@ -5,7 +5,7 @@ const errors = require('../assets/errors');
 // 엑세스 토큰 생성기
 const getAccessToken = (nickname, userId, refreshToken) => {
   const accessToken = jwt.sign({ nickname, userId, refreshToken }, process.env.ACCESS_TOKEN_KEY, {
-    expiresIn: '60s',
+    expiresIn: '1d',
   });
 
   return accessToken;
