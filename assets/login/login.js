@@ -11,6 +11,11 @@ const postLogin = async (loginInfo) => {
 
     const data = await res.json();
     alert(data.msg);
+
+    if (res.ok) {
+      // 로그인 완료 시 메인 페이지로 이동
+      window.location.href = '/main';
+    }
   } catch (err) {
     console.error(err);
   }
@@ -28,5 +33,14 @@ const loginHandler = (() => {
       result[element.name] = element.value;
     }
     postLogin(result); // login POST 요청을 보냅니다.
+  });
+})();
+
+// 회원가입 버튼 클릭 시 회원가입 페이지로 이동
+const signupHandler = (() => {
+  const signupButton = document.querySelector('.signup-button');
+  signupButton.addEventListener('click', async () => {
+    // await fetch('/signup');
+    window.location.href = '/signup';
   });
 })();
