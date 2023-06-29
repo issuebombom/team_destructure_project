@@ -5,13 +5,17 @@ const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
+// 게시글 작성 페이지 띄우기
+router.get('/posts', async (req, res) => {
+  res.render('createPost.ejs');
+});
+
 // 게시글 작성
 router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async (req, res) => {
   try {
     const userId = res.locals.user;
     const filepath = req.file ? req.file.location : null;
     const { categoryList, title, content } = req.body;
-
     if (!title || !content) {
       res.status(412).json({
         message: '제목 또는 내용을 입력해주세요',
@@ -19,12 +23,15 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
       return;
     }
 
+    const imageTag = filepath ? `<img src="${filepath}" alt="게시글 이미지">` : '';
+    const updatedContent = `${content} ${imageTag}`;
+    // text사이에 img 삽입하는 방법을 찾아봐야함
     const post = await Posts.create({
       UserId: userId.userId,
       Nickname: userId.nickname,
       categoryList,
       title,
-      content,
+      content: updatedContent,
       img: filepath,
     });
 
@@ -45,7 +52,7 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
 
 // 최신 게시글 조회 API
 // res는 추후 수정필요 (하나의 파일로 관리하여 오류메세지 통일)
-router.get('/posts', async (req, res) => {
+router.get('/posts/newPost', async (req, res) => {
   try {
     const postList = await Posts.findAll({
       attributes: ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'],

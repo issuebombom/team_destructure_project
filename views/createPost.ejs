@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시글 작성</title>
+  </head>
+  <body>
+    <header>
+      <a href="../views/main.ejs" id="homeBtn"
+        ><img src="../assets/image/home.png" alt="홈으로 가기"
+      /></a>
+      <h1 id="title">NODE BOOK</h1>
+    </header>
+    <form class="postForm" enctype="multipart/form-data">
+      <label>제목:</label>
+      <input type="text" id="postTitle" placeholder="제목을 입력하세요" />
+      <br />
+      <label>카테고리:</label>
+      <select class="category" id="postInterest">
+        <option value="Music">음악</option>
+        <option value="Movie">영화</option>
+        <option value="Restaurant">맛집</option>
+        <option value="Exercise">운동</option>
+        <option value="Trave">여행</option>
+      </select>
+      <br />
+      <label>내용:</label>
+      <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
+      <br />
+      <input type="file" name="file" id="file" />
+      <br />
+      <button tpye="submit" id="createPostBtn">작성</button>
+      <button type="button" id="cancelPostBtn">취소</button>
+    </form>
+  </body>
+  <script src="/post/post.js"></script>
+</html>
