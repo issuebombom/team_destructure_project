@@ -16,7 +16,6 @@ module.exports = {
           model: 'Posts',
           key: 'postId',
         },
-        onDelete: 'CASCADE',
       },
       categoryList: {
         type: Sequelize.STRING,

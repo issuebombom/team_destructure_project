@@ -1,7 +1,7 @@
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const express = require('express');
-const path = require('path');
+const path = require('path')
 
 const usersRouter = require('./routes/users.router');
 const postsRouter = require('./routes/posts.router');
