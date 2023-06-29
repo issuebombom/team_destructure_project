@@ -5,6 +5,10 @@ const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
+router.get('/', async (req, res) => {
+  res.render('post.ejs');
+});
+
 // 게시글 작성
 router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async (req, res) => {
   try {
@@ -19,12 +23,15 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
       return;
     }
 
+    // const imageTag = filepath ? `<img src="${filepath}" alt="게시글 이미지">` : '';
+    // const updatedContent = `${content} ${imageTag}`;
+
     const post = await Posts.create({
       UserId: userId.userId,
       Nickname: userId.nickname,
       categoryList,
       title,
-      content,
+      content: updatedContent,
       img: filepath,
     });
 
