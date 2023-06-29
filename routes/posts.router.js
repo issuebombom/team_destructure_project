@@ -5,6 +5,10 @@ const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
+router.get('/main', async (req, res) => {
+  res.render('/posts.ejs');
+});
+
 // 게시글 작성
 router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async (req, res) => {
   try {
