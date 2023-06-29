@@ -1,6 +1,5 @@
 const express = require('express');
-const { Op } = require('sequelize');
-const { Posts, Users, Likes } = require('../models');
+const { Likes } = require('../models');
 const { verifyAccessToken } = require('../middleware/auth.middleware');
 
 const router = express.Router();
@@ -34,22 +33,6 @@ router.get('/posts/:postId/like', async (req, res) => {
     return res.status(200).json({ message: '좋아요 조회 성공' });
   } catch (error) {
     console.log(error);
-  }
-});
-
-// 게시글 다시 클릭시 취소? 삭제?  API
-router.delete('/posts/:postId/delLike', verifyAccessToken, async (req, res) => {
-  try {
-    const { userId } = res.locals.user;
-    const { postId } = req.params.postId;
-
-    const deleteLike = await Likes.findOne({ where: { userId, postId } });
-
-    if (!deleteLike) return res.status(400).json({ message: '좋아요를 찾을수 없습니다.' });
-    await deleteLike.destroy(userId, postId);
-    res.status(200).json({ message: '좋아요 삭제완료' });
-  } catch (error) {
-    res.status(404).json({ message: '좋아요 삭제실패' });
   }
 });
 
