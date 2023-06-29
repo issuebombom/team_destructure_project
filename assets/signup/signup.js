@@ -35,3 +35,12 @@ const loginHandler = (() => {
     postSignup(result); // login POST 요청을 보냅니다.
   });
 })();
+
+// 취소 버튼 클릭 시 로그인 페이지로 이동
+const signupHandler = (() => {
+  const signupButton = document.querySelector('.signup-cancel');
+  signupButton.addEventListener('click', async () => {
+    // await fetch('/signup');
+    window.location.href = '/login';
+  });
+})();
