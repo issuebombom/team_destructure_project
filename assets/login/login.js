@@ -1,12 +1,12 @@
 // 로그인 post fetch
-const postLogin = async (loginInfo) => {
+const postLogin = async (result) => {
   try {
     const res = await fetch('/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(loginInfo),
+      body: JSON.stringify(result),
     });
 
     const data = await res.json();
@@ -32,6 +32,7 @@ const loginHandler = (() => {
       if (element.name === '') continue;
       result[element.name] = element.value;
     }
+
     postLogin(result); // login POST 요청을 보냅니다.
   });
 })();
