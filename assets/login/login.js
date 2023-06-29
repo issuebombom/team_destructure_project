@@ -1,3 +1,11 @@
+const queryString = window.location.search;
+const queryParams = new URLSearchParams(queryString);
+const message = queryParams.get('message');
+
+if (message === 'redirect') {
+  alert('로그인이 필요합니다.')
+}
+
 // 로그인 post fetch
 const postLogin = async (result) => {
   try {

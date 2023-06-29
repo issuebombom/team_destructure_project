@@ -1,4 +1,4 @@
-// 로그인 post fetch
+// 회원가입 post fetch
 const postSignup = async (signupInfo) => {
   try {
     const res = await fetch('/signup', {
