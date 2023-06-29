@@ -1,6 +1,7 @@
 const { Users, Categories } = require('../models');
 const errors = require('../assets/errors');
 const authMiddleware = require('../middleware/auth.middleware');
+const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
@@ -11,21 +12,39 @@ router.post('/signup', async (req, res) => {
 
   try {
     const user = await Users.findOne({
-      where: { nickname },
+      where: {
+        [Op.or]: [{ nickname }, { email }],
+      },
     });
 
-    // 닉네임 고유값에 대한 검증을 합니다.
-    if (user) return res.status(errors.existUser.status).send({ msg: errors.existUser.msg });
+    if (user) {
+      // 닉네임 고유값에 대한 검증을 합니다.
+      if (user.nickname === nickname)
+        return res.status(errors.existUser.status).send({ msg: errors.existUser.msg });
+  
+      // 이메일 고유값에 대한 검증을 합니다.
+      if (user.email === email)
+        return res.status(errors.existEmail.status).send({ msg: errors.existEmail.msg });
+    }
+
+    // 이메일 양식 검증
+    let re = new RegExp(/^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/);
+    if (!re.test(email))
+      return res.status(errors.validEmail.status).send({ msg: errors.validEmail.msg });
 
     // 닉네임에 영문 대소문자, 숫자만 허용합니다.
-    let re = new RegExp(/^[a-zA-Z0-9]+$/);
+    re = new RegExp(/^[a-zA-Z0-9]+$/);
     if (!re.test(nickname))
       return res.status(errors.validNickname.status).send({ msg: errors.validNickname.msg });
+    
+    // 패스워드 양식 검증
+    re = new RegExp(/^[a-zA-Z0-9!@#$%^&*()]+$/);
+    if (!re.test(password)) return res.status(errors.validPassword.status).send({ msg: errors.validPassword.msg });
 
     // 패스워드와 패스워드 확인이 일치하는지 검증
     if (password !== confirm)
       return res.status(errors.passwordDiff.status).send({ msg: errors.passwordDiff.msg });
-
+    
     // 닉네임 패턴 비밀번호 적용 유무를 검증
     re = new RegExp(nickname, 'i');
     if (re.test(password))
@@ -62,10 +81,10 @@ router.post('/signup', async (req, res) => {
 
 // 로그인
 router.post('/login', async (req, res) => {
-  const { nickname, password } = req.body;
+  const { email, password } = req.body;
   try {
     // 데이터베이스에서 유저 정보 조회
-    const user = await Users.findOne({ where: { nickname } });
+    const user = await Users.findOne({ where: { email } });
     if (!user) return res.status(errors.notUser.status).send({ msg: errors.notUser.msg });
 
     // 암호 확인
@@ -74,8 +93,8 @@ router.post('/login', async (req, res) => {
       return res.status(errors.passwordWrong.status).send({ msg: errors.passwordWrong.msg });
 
     // 리프레시 토큰을 데이터베이스에 저장
-    const refreshToken = authMiddleware.getRefreshToken(nickname, user.userId); // 수정 예정
-    const accessToken = authMiddleware.getAccessToken(nickname, user.userId, refreshToken);
+    const refreshToken = authMiddleware.getRefreshToken(user.nickname, user.userId); // 수정 예정
+    const accessToken = authMiddleware.getAccessToken(user.nickname, user.userId, refreshToken);
     const update = { refreshToken };
     await Users.update(update, { where: { userId: user.userId } });
 
