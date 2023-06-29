@@ -30,8 +30,11 @@ function verifyAccessToken(req, res, next) {
   const cookies = req.cookies;
 
   // 쿠키가 없는 경우
-  if (!cookies?.accessCookie)
-    return res.status(errors.noCookie.status).send({ msg: errors.noCookie.msg });
+  if (!cookies?.accessCookie) {
+    // res.status(errors.noCookie.status).send({ msg: errors.noCookie.msg });
+    res.redirect('/login?message=redirect')
+    return next();
+  }
 
   // access token 검증
   const accessToken = cookies.accessCookie;

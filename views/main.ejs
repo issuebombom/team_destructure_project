@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/main/main.css" rel="stylesheet">
+  <script src="/main/main.js"></script>
   <title>메인페이지</title>
 </head>
 
@@ -15,10 +16,12 @@
     <a href="#">🏠</a>
     <form class="login-form">
       <input type="text" name="search" placeholder="검색어 입력">
-      <button type="submit" id="login-button">검색</button>
+      <button type="submit" id="search">검색</button>
     </form>
-    <a href="#">👦🏻</a>
-    <button>logout</button>
+    <a href="#" class="mypage">👦🏻</a>
+    <form action="/logout" method="GET">
+      <button type="submit" class="logout-button">login</button>
+    </form>
   </header>
   <main>
     <section class="categories-container">
@@ -34,18 +37,13 @@
         <button>글작성</button>
       </nav>
       <!-- ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'] -->
-      <div class="post-card">
-        <a href="#">닉네임</a>
-        <p>컨텐츠 내용이 들어있습니다.</p>
-      </div>
-      <div class="post-card">
-        <a href="#">닉네임</a>
-        <p>컨텐츠 내용이 들어있습니다.</p>
-      </div>
-      <div class="post-card">
-        <a href="#">닉네임</a>
-        <p>컨텐츠 내용이 들어있습니다.</p>
-      </div>
+      <% data.postList.forEach((post, idx)=> { %>
+        <div class="post-card">
+          <a href="#">닉네임: <%= post.nickname %></a>
+          <p>게시글: <%= post.content %>
+          </p>
+        </div>
+        <% }) %>
     </section>
     <section class="info-container">
       <div class="best-top-10">
@@ -67,6 +65,5 @@
     </section>
   </main>
 </body>
-<script href="/main/main.js"></script>
 
 </html>
