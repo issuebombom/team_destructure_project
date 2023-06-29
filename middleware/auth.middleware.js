@@ -3,10 +3,14 @@ const { Users, Posts, Comments } = require('../models');
 const errors = require('../assets/errors');
 
 // 엑세스 토큰 생성기
-const getAccessToken = (nickname, userId, refreshToken) => {
-  const accessToken = jwt.sign({ nickname, userId, refreshToken }, process.env.ACCESS_TOKEN_KEY, {
-    expiresIn: '1d',
-  });
+const getAccessToken = (nickname, userId, interest, refreshToken) => {
+  const accessToken = jwt.sign(
+    { nickname, userId, interest, refreshToken },
+    process.env.ACCESS_TOKEN_KEY,
+    {
+      expiresIn: '1d',
+    }
+  );
 
   return accessToken;
 };
@@ -33,7 +37,6 @@ function verifyAccessToken(req, res, next) {
   const accessToken = cookies.accessCookie;
   jwt.verify(accessToken, process.env.ACCESS_TOKEN_KEY, async (err) => {
     req.user = jwt.decode(accessToken); // 페이로드 전달
-
     // access token이 만료된 경우
     if (err) {
       // 콘솔창에 만료됨을 알림
@@ -58,10 +61,14 @@ function verifyAccessToken(req, res, next) {
         await Users.update(update, { where: { userId: user.userId } });
 
         // 엑세스 토큰 재발급 및 쿠키로 보냄
-        res.cookie('accessCookie', getAccessToken(user.nickname, user.userId, refreshToken), {
-          httpOnly: true,
-          maxAge: 24 * 60 * 60 * 1000, // 24시간
-        });
+        res.cookie(
+          'accessCookie',
+          getAccessToken(user.nickname, user.userId, user.interest, refreshToken),
+          {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, // 24시간
+          }
+        );
         console.log('엑세스 토큰 만료로 재발급 진행');
       } catch (err) {
         console.error(err.name, ':', err.message);
@@ -69,6 +76,7 @@ function verifyAccessToken(req, res, next) {
       }
     }
     res.locals.user = req.user;
+    console.log(res.locals.user);
     next();
   });
 }

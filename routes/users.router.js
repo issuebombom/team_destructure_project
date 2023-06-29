@@ -94,7 +94,8 @@ router.post('/login', async (req, res) => {
 
     // 리프레시 토큰을 데이터베이스에 저장
     const refreshToken = authMiddleware.getRefreshToken(user.nickname, user.userId); // 수정 예정
-    const accessToken = authMiddleware.getAccessToken(user.nickname, user.userId, refreshToken);
+    const accessToken = authMiddleware.getAccessToken(user.nickname, user.userId, user.interest, refreshToken);
+
     const update = { refreshToken };
     await Users.update(update, { where: { userId: user.userId } });
 
@@ -109,6 +110,7 @@ router.post('/login', async (req, res) => {
         message: '로그인에 성공하였습니다.',
         userId: user.userId,
         password: user.password,
+        interest: user.interest,
         refreshToken,
       },
     });

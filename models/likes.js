@@ -34,10 +34,6 @@ module.exports = (sequelize, DataTypes) => {
       PostId: {
         type: DataTypes.INTEGER,
       },
-      likes: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-      },
       createdAt: {
         allowNull: false,
         type: DataTypes.NOW,
