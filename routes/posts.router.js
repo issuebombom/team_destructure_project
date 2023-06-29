@@ -52,7 +52,7 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
 
 // 최신 게시글 조회 API
 // res는 추후 수정필요 (하나의 파일로 관리하여 오류메세지 통일)
-router.get('/posts/newPost', async (req, res) => {
+router.get('/posts/new-post', async (req, res) => {
   try {
     const postList = await Posts.findAll({
       attributes: ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'],
