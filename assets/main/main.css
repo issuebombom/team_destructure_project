@@ -1,0 +1,61 @@
+header > * {
+  display: inline-block;
+}
+
+main > section {
+  display: inline-block;
+  border-radius: 5px;
+  border: 1px solid red;
+  vertical-align: top;
+}
+
+nav {
+  text-align: center;
+}
+nav > * {
+  display: inline-block;
+}
+
+.categories-container {
+  padding: 10px;
+}
+
+.categories-container > * {
+  display: block;
+}
+
+.post-container {
+  padding: 10px;
+}
+
+.post-container > * {
+  display: block;
+}
+
+.info-container {
+  padding: 10px;
+}
+
+.best-top-10 > h3 {
+  text-align: center;
+}
+
+.info-container > * {
+  display: block;
+}
+
+.post-card {
+  border-radius: 5px;
+  border: 1px solid red;
+  padding-left: 5px;
+}
+
+.title-card {
+  border-radius: 5px;
+  border: 1px solid red;
+  padding-left: 5px;
+}
+
+.title-card > * {
+  display: inline-block;
+}
