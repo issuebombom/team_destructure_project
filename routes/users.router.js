@@ -81,7 +81,13 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// 로그인
+//* 로그인
+// 로그인 페이지 띄우기
+router.get('/login', async (req, res) => {
+  res.render('login');
+});
+
+// 로그인 처리
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -113,13 +119,8 @@ router.post('/login', async (req, res) => {
     });
 
     res.status(200).send({
-      result: {
-        message: '로그인에 성공하였습니다.',
-        userId: user.userId,
-        password: user.password,
-        interest: user.interest,
-        refreshToken,
-      },
+      msg: '로그인에 성공하였습니다.',
+      userId: user.userId,
     });
   } catch (err) {
     console.error(err.name, ':', err.message);
