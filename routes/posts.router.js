@@ -131,8 +131,9 @@ router.get('/posts/:postId', async (req, res) => {
 // 게시글 검색 기능
 router.get('/lookup', async (req, res) => {
   try {
-    const { search } = req.query;
-    if (!search) {
+    const { title, content, nickname } = req.query;
+
+    if (!title && !content && !nickname) {
       return res.status(400).json({
         message: '검색어를 입력해주세요.',
       });
@@ -140,7 +141,13 @@ router.get('/lookup', async (req, res) => {
 
     const searchPost = await Posts.findAll({
       attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content', 'img'],
-      where: { title: { [Op.like]: `%${search}%` } },
+      where: {
+        [Op.or]: [
+          { title: { [Op.like]: `%${title}%` } },
+          { content: { [Op.like]: `%${content}%` } },
+          { nickname: { [Op.like]: `%${nickname}%` } },
+        ],
+      },
     });
 
     return res.status(200).json({
