@@ -7,7 +7,13 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
 
-// 회원가입
+//* 회원가입
+// 회원가입 페이지 띄우기
+router.get('/signup', async (req, res) => {
+  res.render('signup');
+});
+
+// 회원가입 처리
 router.post('/signup', async (req, res) => {
   const { nickname, email, password, confirm, interest } = req.body;
 
@@ -64,15 +70,7 @@ router.post('/signup', async (req, res) => {
       interest,
     });
     res.send({
-      result: {
-        message: '회원가입이 완료되었습니다.',
-        userId: userCreateResult.userId,
-        nickname,
-        password: hashedPassword,
-        confirm,
-        interest,
-        email,
-      },
+      msg: '회원가입이 완료되었습니다.',
     });
   } catch (err) {
     // 데이터베이스 접근 관련 에러 발생 시 catch로 이동
@@ -81,7 +79,13 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// 로그인
+//* 로그인
+// 로그인 페이지 띄우기
+router.get('/login', async (req, res) => {
+  res.render('login');
+});
+
+// 로그인 처리
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -113,13 +117,8 @@ router.post('/login', async (req, res) => {
     });
 
     res.status(200).send({
-      result: {
-        message: '로그인에 성공하였습니다.',
-        userId: user.userId,
-        password: user.password,
-        interest: user.interest,
-        refreshToken,
-      },
+      msg: '로그인에 성공하였습니다.',
+      userId: user.userId,
     });
   } catch (err) {
     console.error(err.name, ':', err.message);
