@@ -22,7 +22,6 @@ router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
       const user = await Users.findOne({
         attributes: [
           'nickname',
-          'password',
           'email',
           'interest',
           [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date'],
@@ -69,27 +68,30 @@ router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
 // 유저 닉네임 변경코드
 router.put('/mypage/:userId/nickname', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
-  console.log(userData);
+  const { userId } = req.params;
   const { nickname } = req.body;
+
+  // 닉네임 변경 권한 확인
+  if (userData.userId !== Number(userId)) {
+    return res.status(412).json({ errorMessage: '닉네임 변경권한이 없습니다.' });
+  }
 
   // 닉네임 구성요소 확인
   try {
     const confirmedNickname = /^[a-zA-Z0-9]{3,}$/.test(nickname); // test() 메서드로 Boolean 값을 할당하고
     if (!confirmedNickname) {
-      res.status(412).json({
-        errorMessage: '닉네임은 영문 대소문자, 숫자만 허용합니다.',
+      return res.status(412).json({
+        errorMessage: '닉네임은 3글자 이상의 영문 대소문자, 숫자만 허용합니다.',
       });
-      return;
     }
 
     // 닉네임 중복확인
     const existNickname = await Users.findAll({ where: { nickname } });
     // console.log(existNickname.length);
     if (existNickname.length !== 0) {
-      res.status(412).json({
+      return res.status(412).json({
         errorMessage: '이미 존재하는 닉네임 입니다.',
       });
-      return;
     }
 
     await Users.update({ nickname }, { where: { [Op.and]: [{ userId: userData.userId }] } });
@@ -103,23 +105,26 @@ router.put('/mypage/:userId/nickname', verifyAccessToken, async (req, res) => {
 // 유저 관심사 변경코드
 router.put('/mypage/:userId/interest', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
+  const { userId } = req.params;
   const { interest } = req.body;
-  // await const interestCategory = Categories.find
+
+  const interestArr = ['Music', 'Restaurant', 'Exercise', 'Movie', 'Travel'];
+
   try {
+    // 관심사 변경 권한 확인
+    if (userData.userId !== Number(userId)) {
+      return res.status(412).json({ errorMessage: '관심사 변경권한이 없습니다.' });
+    }
+
     // 관심사 형식 예외 처리
     if (!interest || interest.includes(' ') || interest === '' || interest === undefined) {
-      return res.status(412).json({ errorMessage: '관심사의 형식이 올바르지 않습니다.' });
+      return res.status(412).json({ errorMessage: '작성한 관심사의 형식이 올바르지 않습니다.' });
     }
+
     // 관심사 리스트 외의 요소들 예외 처리
-    // if (
-    //   interest !== toUpperCase('Music') ||
-    //   interest !== toUpperCase('Restaurant') ||
-    //   interest !== toUpperCase('Exercise') ||
-    //   interest !== toUpperCase('Movie') ||
-    //   interest !== toUpperCase('Travel')
-    // ) {
-    //   return res.status(412).json({ errorMessage: '해당하는 관심사가 없습니다.' });
-    // }
+    if (!interestArr.includes(interest)) {
+      return res.status(412).json({ errorMessage: '작성한 관심사가 리스트에 존재하지 않습니다.' });
+    }
 
     // 관심사 변경
     await Users.update({ interest }, { where: { [Op.and]: [{ userId: userData.userId }] } });
@@ -135,17 +140,29 @@ router.put('/mypage/:userId/password', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
   const { userId } = req.params;
   const { newPassword, confirm } = req.body;
+  // console.log();
 
-  const saltRounds = 10;
   // 바디에 입력받은 newPassword 해쉬화
+  const saltRounds = 10;
+
+  // 바디에 입력받은 newPassword를 단방향 암호화 시킨것
   const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-  console.log(hashedPassword); // 바디에 입력받은 newPassword를 단방향 암호화 시킨것
+  console.log(hashedPassword);
+
+  // Users 모델에 저장되어 있는 userId의 패스워드
   const { password } = await Users.findOne({ where: { userId } });
-  console.log(password); // Users 모델에 저장되어 있는 userId의 패스워드
+  console.log(password);
 
   // 해쉬화 시킨 패스워드와, 로그인된 유저의 패스워드가 일치한지 확인
   const matchPassword = await bcrypt.compare(newPassword, password);
+  console.log(matchPassword);
+
   try {
+    // 패스워드 변경 권한 확인
+    if (userData.userId !== Number(userId)) {
+      return res.status(412).json({ errorMessage: '패스워드 변경권한이 없습니다.' });
+    }
+
     // 패스워드형식 예외처리
     if (
       !newPassword ||
@@ -194,29 +211,22 @@ router.put('/mypage/:userId/password', verifyAccessToken, async (req, res) => {
 
 // 회원탈퇴
 router.delete('/mypage/:userId', verifyAccessToken, async (req, res) => {
+  const userData = res.locals.user;
   const { userId } = req.params;
-  const { deletePassword, confirm } = req.params;
-  // const saltRounds = 10;
-
-  // // 바디에 입력받은 deletePassword 해쉬화
-  // const hashedPassword = await bcrypt.hash(deletePassword, saltRounds);
-  // console.log(hashedPassword); // 바디에 입력받은 deletePassword 단방향 암호화 시킨것
-  // const { password } = await Users.findOne({ where: { userId } });
-  // console.log(password); // Users 모델에 저장되어 있는 userId의 패스워드
-
-  // 해쉬화 시킨 패스워드와, 로그인된 유저의 패스워드가 일치한지 확인
-  // const matchPassword = await bcrypt.compare(deletePassword, password);
+  const { password, confirm } = req.body;
 
   try {
-    // 현재 로그인된 비밀번호와 바디의 비밀번호가 다른지 확인.
-    // if (!matchPassword) {
-    //   res.status(412).json({ errorMessage: '회원탈퇴 권한이 없습니다.' });
-    // }
+    // 회원탈퇴 권한 확인
+    if (userData.userId !== Number(userId)) {
+      return res.status(412).json({ errorMessage: '회원탈퇴 권한이 없습니다.' });
+    }
 
-    // deletePassword가 confirm값과 일치하면 회원탈퇴 진행.
-    if (deletePassword !== confirm) {
+    // password가 confirm값과 일치하면 회원탈퇴 진행.
+    if (password !== confirm) {
       return res.status(412).json({ errorMessage: '패스워드 확인값이 일치하지 않습니다.' });
     }
+
+    // 회원탈퇴
     await Users.destroy({ where: { userId } });
     return res.status(200).json({ message: '회원탈퇴가 정상적으로 완료되었습니다.' });
   } catch (err) {
