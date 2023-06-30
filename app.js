@@ -34,6 +34,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('assets', path.join(__dirname, 'assets'));
 
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // npm i cookie-parser
 

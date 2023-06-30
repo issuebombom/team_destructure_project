@@ -5,8 +5,21 @@ const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
+// 메인페이지 띄우기
 router.get('/main', async (req, res) => {
-  res.render('/posts.ejs');
+  res.render('posts.ejs');
+});
+
+// 로그인한 사용자의 카테고리 가져오기
+router.get('/main/interest', verifyAccessToken, async (req, res) => {
+  try {
+    const { interest } = res.locals.user; // 로그인한 유저의 카테고리를 변수에 담음
+    const posts = await Posts.findAll({ categoryList: interest });
+    res.json(posts); // 찾은 카테고리를 전송
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error');
+  }
 });
 
 // 게시글 작성
