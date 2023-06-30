@@ -1,92 +1,51 @@
-const userPostTag = async () => {
-  const userPostInfo = document.querySelector('.user-post-tag');
-  try {
-    const res = await fetch(`/mypage/:userId`);
-    const data = await res.json();
-    console.log(data);
-    data.forEach((myPostInfo) => {
-      userPostInfo.innerHTML = `
-                            <ul class="user-tag" id="user-tag">
-                              <li>${myPostInfo.title}</li>
-                              <li>${myPostInfo.content}</li>
-                              <li>${myPostInfo.date}</li>
-                            </ul>
-                           `;
-    });
-  } catch (error) {
-    console.error(error);
-  }
+// 창이 로딩되면 이벤트 발생.
+document.addEventListener('DOMContentLoaded', () => {
+  userData();
+});
+
+// 유저정보 조회태그
+const userTag = document.querySelector('.user-tag');
+console.log(userTag);
+// 유저의 게시글 조회태그
+const userPostTag = document.querySelector('.user-post-tag');
+console.log(userPostTag);
+// 유저의 댓글 조회태그
+const userCommentTag = document.querySelector('.user-comment-tag');
+console.log(userCommentTag);
+
+// fetch로 정보 받아와서 json()화 시키기.
+const userData = async () => {
+  const res = await fetch(`/mypage/userInfo`);
+  const data = await res.json();
+
+  // 유저정보, 유저의 게시글 정보, 유저의 댓글 정보 뽑아오기
+  const { user, posts, comments } = data;
+  console.log(user, posts, comments);
+
+  // 유저 정보 뿌리기
+  userTag.innerHTML = `
+                        <li>Nickname : ${user.nickname}</li>
+                        <li>Email : ${user.email}</li>
+                        <li>Interest : ${user.interest}</li>
+                        <button>유저 정보 변경하기</button>
+                      `;
+
+  // 게시글 정보 뿌리기
+  posts.forEach((myPostInfo) => {
+    userPostTag.innerHTML += `
+                              <li>Title : ${myPostInfo.title}</li>
+                              <li>Content : ${myPostInfo.content}</li>
+                              <li>Date : ${myPostInfo.date}</li>
+                              <p></p>
+                            `;
+  });
+
+  // 댓글 정보 뿌리기
+  comments.forEach((myCommentInfo) => {
+    userCommentTag.innerHTML += `
+                                  <li>Content : ${myCommentInfo.content}</li>
+                                  <li>Date : ${myCommentInfo.date}</li>
+                                  <p></p>
+                                `;
+  });
 };
-
-// document.addEventListener('DOMContentLoaded', async () => {
-//   //   const userId =
-//   console.log('hi');
-//   await fetch(`/user/mypage/${userId}`, {
-//     method: 'GET',
-//     headers: { accept: 'application/json' },
-//   })
-//     .then((res) => {
-//       res.json();
-//     })
-//     .then((data) => {
-//       console.log(data);
-//       console.log('hello');
-//     });
-// });
-
-// const userPostDetail = async (userPost) => {
-//   const res = await fetch(`http://localhost:3000/mypage/:userId`, {
-//     method: 'GET',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//   })
-//     .then((res) => res.json())
-//     .then((data) => {
-//       console.log('data');
-//     });
-//   const userDetailTemplates = `
-//         <h2 class="title" >${data.title}</h2>
-//         <div>
-//             <div>
-//               <p class="content">내용 : ${data.content}</p>
-//             </div>
-//         </div>
-//       `;
-//   const userPostEl = document.querySelector('#user-detail');
-
-//   userPostEl.innerHTML = userDetailTemplates;
-// };
-
-// userPostDetail();
-
-// const getMypage = async (result) => {
-//   try {
-//     const res = await fetch('/mypage', {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(result),
-//     });
-
-//     const data = await res.json();
-//     alert(data.msg);
-//   } catch (err) {
-//     console.error(err);
-//   }
-// };
-
-// const userDetailHandler = (() => {
-//   const userDetailForm = document.querySelector('.user-detail-form');
-//   userDetailForm.addEventListener('submit', (event) => {
-//     event.preventDefault();
-//     const result = new Object();
-//     for (let element of event.target) {
-//       if (element.name === '') continue;
-//       result[element.name] = element.value;
-//     }
-
-//     getMypage(result);
-//   });
-// })();

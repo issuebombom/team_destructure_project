@@ -6,9 +6,10 @@ const bcrypt = require('bcrypt');
 const router = express.Router();
 
 // 마이 페이지 띄우기
-router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
-  const { userId } = req.params;
+router.get('/mypage', verifyAccessToken, async (req, res) => {
+  const { userId } = res.locals.user;
   const userData = await Users.findOne({ where: { userId } }); // DB에서 해당 userId를 갖고있는 user의 data를 할당.
+  console.log(userData);
 
   res.render('mypage.ejs', {
     nickname: userData.nickname,
@@ -18,52 +19,47 @@ router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
 });
 
 // 유저 정보 조회 (유저정보 + 게시글 + 댓글)
-router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
-  const { userId } = req.params;
+router.get('/mypage/userInfo', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
 
   try {
-    if (userId === String(userData.userId)) {
-      // 유저 정보 조회
-      const user = await Users.findOne({
-        attributes: [
-          'nickname',
-          'email',
-          'interest',
-          [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date'],
-        ],
-        where: { userId },
-      });
+    // 유저 정보 조회
+    const user = await Users.findOne({
+      attributes: [
+        'nickname',
+        'email',
+        'interest',
+        [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date'],
+      ],
+      where: { userId: userData.userId },
+    });
 
-      // 유저의 게시글 조회
-      const post = await Posts.findAll({
-        attributes: [
-          'title',
-          'content',
-          [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date'],
-        ],
-        where: { UserId: userId },
-      });
+    // 유저의 게시글 조회
+    const post = await Posts.findAll({
+      attributes: [
+        'title',
+        'content',
+        [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date'],
+      ],
+      where: { UserId: userData.userId },
+    });
 
-      // 유저의 댓글 조회
-      const comment = await Comments.findAll({
-        attributes: [
-          'PostId',
-          'content',
-          [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date'],
-        ],
-        where: { UserId: userId },
-      });
+    // 유저의 댓글 조회
+    const comment = await Comments.findAll({
+      attributes: [
+        'PostId',
+        'content',
+        [Sequelize.fn('left', Sequelize.col('createdAt'), 10), 'date'],
+      ],
+      where: { UserId: userData.userId },
+    });
 
-      // 유저의 정보, 게시글, 댓글 조회
-      return res.status(200).json({
-        user,
-        posts: post,
-        comments: comment,
-      });
-    } else {
-      return res.status(401).json({ errorMessage: '회원 정보에 접근권한이 없습니다.' });
-    }
+    // 유저의 정보, 게시글, 댓글 조회
+    return res.status(200).json({
+      user,
+      posts: post,
+      comments: comment,
+    });
   } catch (err) {
     res.status(400).json({ errorMessage: '유저 정보 조회에 실패하였습니다.' });
   }
