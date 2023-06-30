@@ -5,16 +5,22 @@ const { Users, Posts, Comments } = require('../models');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
-router.get('/user/mypage/:userId', verifyAccessToken, async (req, res) => {
-  const userData = res.locals.user;
-  res.render('mypage.ejs', { userId: userData.userId });
+// 마이 페이지 띄우기
+router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
+  const { userId } = req.params;
+  const userData = await Users.findOne({ where: { userId } }); // DB에서 해당 userId를 갖고있는 user의 data를 할당.
+
+  res.render('mypage.ejs', {
+    nickname: userData.nickname,
+    email: userData.email,
+    interest: userData.interest,
+  });
 });
 
 // 유저 정보 조회 (유저정보 + 게시글 + 댓글)
 router.get('/mypage/:userId', verifyAccessToken, async (req, res) => {
   const { userId } = req.params;
   const userData = res.locals.user;
-  console.log(userData);
 
   try {
     if (userId === String(userData.userId)) {

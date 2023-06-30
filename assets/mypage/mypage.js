@@ -1,18 +1,38 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  //   const userId =
-  console.log('hi');
-  await fetch(`/user/mypage/${userId}`, {
-    method: 'GET',
-    headers: { accept: 'application/json' },
-  })
-    .then((res) => {
-      res.json();
-    })
-    .then((data) => {
-      console.log(data);
-      console.log('hello');
+const userPostTag = async () => {
+  const userPostInfo = document.querySelector('.user-post-tag');
+  try {
+    const res = await fetch(`/mypage/:userId`);
+    const data = await res.json();
+    console.log(data);
+    data.forEach((myPostInfo) => {
+      userPostInfo.innerHTML = `
+                            <ul class="user-tag" id="user-tag">
+                              <li>${myPostInfo.title}</li>
+                              <li>${myPostInfo.content}</li>
+                              <li>${myPostInfo.date}</li>
+                            </ul>
+                           `;
     });
-});
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// document.addEventListener('DOMContentLoaded', async () => {
+//   //   const userId =
+//   console.log('hi');
+//   await fetch(`/user/mypage/${userId}`, {
+//     method: 'GET',
+//     headers: { accept: 'application/json' },
+//   })
+//     .then((res) => {
+//       res.json();
+//     })
+//     .then((data) => {
+//       console.log(data);
+//       console.log('hello');
+//     });
+// });
 
 // const userPostDetail = async (userPost) => {
 //   const res = await fetch(`http://localhost:3000/mypage/:userId`, {
