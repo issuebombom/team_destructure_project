@@ -5,11 +5,6 @@ const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
-// 메인페이지 띄우기
-router.get('/main', async (req, res) => {
-  res.render('posts.ejs');
-});
-
 // 로그인한 사용자의 카테고리 가져오기
 // router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
 //   try {
