@@ -5,21 +5,14 @@ const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
-// 로그인한 사용자의 카테고리 가져오기
-// router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
-//   try {
-//     const { interest } = res.locals.user; // 로그인한 유저의 카테고리를 변수에 담음
-//     const posts = await Posts.findAll({ categoryList: interest });
-//     res.json(posts); // 찾은 카테고리를 전송
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Error');
-//   }
-// });
-
 // 게시글 작성 페이지 띄우기
 router.get('/posts', async (req, res) => {
   res.render('createPost.ejs');
+});
+
+// 관심게시글 조회 페이지 띄우기
+router.get('/posts/category/interest', async (req, res) => {
+  res.render('posts.ejs');
 });
 
 // 게시글 작성
@@ -35,7 +28,9 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
       return;
     }
 
-    const imageTag = filepath ? `<img src="${filepath}" alt="게시글 이미지">` : '';
+    const imageTag = filepath
+      ? `<img src="${filepath}" alt="게시글 이미지" style="width: 50px;">`
+      : '';
     const updatedContent = `${content} ${imageTag}`;
     // text사이에 img 삽입하는 방법을 찾아봐야함
     const post = await Posts.create({
@@ -62,7 +57,7 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
   }
 });
 
-// 최신 게시글 조회 API
+// 최신 게시글 조회 API -> 메인화면 출력되는 곳
 // res는 추후 수정필요 (하나의 파일로 관리하여 오류메세지 통일)
 router.get('/posts/new-post', async (req, res) => {
   try {
@@ -88,7 +83,7 @@ router.get('/posts/new-post', async (req, res) => {
 });
 
 // 관심사 게시글 조회
-router.get('/main/category/interest', verifyAccessToken, async (req, res) => {
+router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
   try {
     const userId = res.locals.user;
 
