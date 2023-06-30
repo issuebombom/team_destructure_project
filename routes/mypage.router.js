@@ -19,7 +19,7 @@ router.get('/mypage', verifyAccessToken, async (req, res) => {
 });
 
 // 유저 정보 조회 (유저정보 + 게시글 + 댓글)
-router.get('/mypage/userInfo', verifyAccessToken, async (req, res) => {
+router.get('/mypage/userinfo', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
 
   try {
@@ -68,15 +68,9 @@ router.get('/mypage/userInfo', verifyAccessToken, async (req, res) => {
 // 유저 정보 수정 (nickname,interest,password)
 
 // 유저 닉네임 변경코드
-router.put('/mypage/:userId/nickname', verifyAccessToken, async (req, res) => {
+router.put('/mypage/nickname', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
-  const { userId } = req.params;
   const { nickname } = req.body;
-
-  // 닉네임 변경 권한 확인
-  if (userData.userId !== Number(userId)) {
-    return res.status(412).json({ errorMessage: '닉네임 변경권한이 없습니다.' });
-  }
 
   // 닉네임 구성요소 확인
   try {
@@ -89,7 +83,6 @@ router.put('/mypage/:userId/nickname', verifyAccessToken, async (req, res) => {
 
     // 닉네임 중복확인
     const existNickname = await Users.findAll({ where: { nickname } });
-    // console.log(existNickname.length);
     if (existNickname.length !== 0) {
       return res.status(412).json({
         errorMessage: '이미 존재하는 닉네임 입니다.',
@@ -105,19 +98,13 @@ router.put('/mypage/:userId/nickname', verifyAccessToken, async (req, res) => {
 });
 
 // 유저 관심사 변경코드
-router.put('/mypage/:userId/interest', verifyAccessToken, async (req, res) => {
+router.put('/mypage/interest', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
-  const { userId } = req.params;
   const { interest } = req.body;
 
   const interestArr = ['Music', 'Restaurant', 'Exercise', 'Movie', 'Travel'];
 
   try {
-    // 관심사 변경 권한 확인
-    if (userData.userId !== Number(userId)) {
-      return res.status(412).json({ errorMessage: '관심사 변경권한이 없습니다.' });
-    }
-
     // 관심사 형식 예외 처리
     if (!interest || interest.includes(' ') || interest === '' || interest === undefined) {
       return res.status(412).json({ errorMessage: '작성한 관심사의 형식이 올바르지 않습니다.' });
@@ -138,11 +125,9 @@ router.put('/mypage/:userId/interest', verifyAccessToken, async (req, res) => {
 });
 
 // 유저 패스워드 변경코드
-router.put('/mypage/:userId/password', verifyAccessToken, async (req, res) => {
+router.put('/mypage/password', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
-  const { userId } = req.params;
   const { newPassword, confirm } = req.body;
-  // console.log();
 
   // 바디에 입력받은 newPassword 해쉬화
   const saltRounds = 10;
@@ -160,11 +145,6 @@ router.put('/mypage/:userId/password', verifyAccessToken, async (req, res) => {
   console.log(matchPassword);
 
   try {
-    // 패스워드 변경 권한 확인
-    if (userData.userId !== Number(userId)) {
-      return res.status(412).json({ errorMessage: '패스워드 변경권한이 없습니다.' });
-    }
-
     // 패스워드형식 예외처리
     if (
       !newPassword ||
@@ -212,24 +192,18 @@ router.put('/mypage/:userId/password', verifyAccessToken, async (req, res) => {
 });
 
 // 회원탈퇴
-router.delete('/mypage/:userId', verifyAccessToken, async (req, res) => {
+router.delete('/mypage/userfire', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
-  const { userId } = req.params;
   const { password, confirm } = req.body;
 
   try {
-    // 회원탈퇴 권한 확인
-    if (userData.userId !== Number(userId)) {
-      return res.status(412).json({ errorMessage: '회원탈퇴 권한이 없습니다.' });
-    }
-
     // password가 confirm값과 일치하면 회원탈퇴 진행.
     if (password !== confirm) {
       return res.status(412).json({ errorMessage: '패스워드 확인값이 일치하지 않습니다.' });
     }
 
     // 회원탈퇴
-    await Users.destroy({ where: { userId } });
+    await Users.destroy({ where: { userId: userData.userId } });
     return res.status(200).json({ message: '회원탈퇴가 정상적으로 완료되었습니다.' });
   } catch (err) {
     console.log(err);
