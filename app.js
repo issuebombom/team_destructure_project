@@ -19,10 +19,11 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'assets')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.set('assets', path.join(__dirname, 'assets'));
+// app.set('assets', path.join(__dirname, 'assets')); 없어도 되는 것 같아 주석처리함(추후 삭제)
 
 // 서버 세팅
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // npm i cookie-parser
 

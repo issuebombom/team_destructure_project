@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const { verifyAccessToken } = require('../middleware/auth.middleware');
 const fetch = require('node-fetch'); // html이 아닌 노드 안에서 fetch하려면 필요함
 
 // 메인 페이지 이동

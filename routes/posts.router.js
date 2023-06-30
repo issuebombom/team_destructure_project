@@ -5,6 +5,18 @@ const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
+// 로그인한 사용자의 카테고리 가져오기
+// router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
+//   try {
+//     const { interest } = res.locals.user; // 로그인한 유저의 카테고리를 변수에 담음
+//     const posts = await Posts.findAll({ categoryList: interest });
+//     res.json(posts); // 찾은 카테고리를 전송
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Error');
+//   }
+// });
+
 // 게시글 작성 페이지 띄우기
 router.get('/posts', async (req, res) => {
   res.render('createPost.ejs');
@@ -55,7 +67,7 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
 router.get('/posts/new-post', async (req, res) => {
   try {
     const postList = await Posts.findAll({
-      attributes: ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'],
+      attributes: ['postId', 'nickname', 'categoryList', 'title', 'content'],
       order: [['createdAt', 'DESC']],
     });
 
@@ -76,7 +88,7 @@ router.get('/posts/new-post', async (req, res) => {
 });
 
 // 관심사 게시글 조회
-router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
+router.get('/main/category/interest', verifyAccessToken, async (req, res) => {
   try {
     const userId = res.locals.user;
 
