@@ -15,6 +15,7 @@ postForm.addEventListener('submit', async (event) => {
   formData.append('title', title);
   formData.append('content', content);
   formData.append('file', file);
+
   try {
     const res = await fetch('/posts', {
       method: 'POST',
@@ -32,6 +33,18 @@ postForm.addEventListener('submit', async (event) => {
     console.error(err);
   }
 });
+
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    let reader = new FileReader();
+    reader.onload = function (e) {
+      document.querySelector('#preview').src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+  } else {
+    document.querySelector('#preview').src = '';
+  }
+}
 
 const postHandler = (() => {
   const cancel = document.querySelector('#cancelPostBtn');

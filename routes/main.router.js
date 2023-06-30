@@ -6,7 +6,7 @@ const fetch = require('node-fetch'); // html이 아닌 노드 안에서 fetch하
 // 메인 페이지 이동
 router.get('/main', verifyAccessToken, async (req, res) => {
   try {
-    const response = await fetch('http://localhost:3000/posts');
+    const response = await fetch('http://localhost:3000/main');
     const data = await response.json();
 
     res.render('main', {
