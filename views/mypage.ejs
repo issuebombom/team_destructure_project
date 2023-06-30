@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>my page</title>
+  </head>
+
+  <body>
+    <h1>title</h1>
+    <a href="#">메인페이지 이동</a>
+    <div class="user-detail" id="user-detail">
+      <form class="user-detail-form">
+        <h2 class="title">제목</h2>
+        <div>
+          <div>
+            <p class="content">내용</p>
+          </div>
+        </div>
+        <button type="submit" id="nickname-update-button">수정하기</button>
+        <button type="button" class="password-update-button">수정하기</button>
+        <button type="button" class="interest-update-button">수정하기</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    const userId = '<%= userId %>'; // 서버에서 전달한 userId 값을 스크립트에 삽입
+    // 이후 로직에서 userId를 사용할 수 있음
+  </script>
+  <script src="/mypage/mypage.js"></script>
+</html>

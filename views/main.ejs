@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/main/main.css" rel="stylesheet">
+  <script src="/main/main.js"></script>
+  <title>메인페이지</title>
+</head>
+
+<body>
+  <h1>메인 페이지 입니다!</h1>
+  <h2>🅽🅾🅳🅴🅱🅾🅾🅺</h2>
+  <header>
+    <a href="#">🏠</a>
+    <form class="login-form">
+      <input type="text" name="search" placeholder="검색어 입력">
+      <button type="submit" id="search">검색</button>
+    </form>
+    <a href="#" class="mypage">👦🏻</a>
+    <form action="/logout" method="GET">
+      <button type="submit" class="logout-button">login</button>
+    </form>
+  </header>
+  <main>
+    <section class="categories-container">
+      <button>운동</button>
+      <button>영화</button>
+      <button>맛집</button>
+      <button>기타</button>
+    </section>
+    <section class="post-container">
+      <nav>
+        <button>관심글</button>
+        <button>최신글</button>
+        <button>글작성</button>
+      </nav>
+      <!-- ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'] -->
+      <% data.postList.forEach((post, idx)=> { %>
+        <div class="post-card">
+          <a href="#">닉네임: <%= post.nickname %></a>
+          <p>게시글: <%= post.content %>
+          </p>
+        </div>
+        <% }) %>
+    </section>
+    <section class="info-container">
+      <div class="best-top-10">
+        <h3>Best Top 10</h3>
+        <div class="title-card">
+          <p>60</p>
+          <a>과제 너무 어려워...</a>
+        </div>
+        <div class="title-card">
+          <p>61</p>
+          <a>야 너두?...</a>
+        </div>
+        <div class="title-card">
+          <p>62</p>
+          <a>야 나두!...</a>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</body>
+
+</html>
