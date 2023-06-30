@@ -8,13 +8,12 @@ router.get('/main', async (req, res) => {
       const response = await fetch('http://localhost:3000/posts/newPost');
       const data = await response.json();
 
-      res.render('main', {
-        data,
-      });
-    } catch (err) {
-      console.error(err);
-    }
+    res.render('main', {
+      data,
+    });
+  } catch (err) {
+    console.error(err);
   }
-);
+});
 
 module.exports = router;

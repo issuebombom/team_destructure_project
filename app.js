@@ -23,6 +23,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // 서버 세팅
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // npm i cookie-parser
 

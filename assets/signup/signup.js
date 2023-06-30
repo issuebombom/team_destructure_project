@@ -11,7 +11,7 @@ const postSignup = async (signupInfo) => {
 
     const data = await res.json();
     alert(data.msg);
-    
+
     if (res.ok) {
       // 로그인 페이지로 이동
       window.location.href = '/login';
