@@ -33,6 +33,7 @@ const upLoadImg = multer({
       callback(null, `${uploadDirectory}/${Date.now()}_${file.originalname}`);
     },
     acl: 'public-read-write',
+    limits: { fieldSize: 360 * 360},
     contentType: multerS3.AUTO_CONTENT_TYPE, // 파일의 Content-Type 자동 설정
     metadata: (req, file, callback) => {
       callback(null, { fieldName: file.fieldname });

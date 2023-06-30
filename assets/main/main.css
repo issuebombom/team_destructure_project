@@ -26,11 +26,15 @@ nav > * {
 
 .post-container {
   padding: 10px;
-  width: 50%;
+  /* width: 50%; */
+ width: 300px;
 }
 
 .post-container > * {
   display: block;
+  /* overflow: hidden; 넘치는 부분을 숨김 */
+  text-overflow: ellipsis; /* 넘치는 텍스트에 대해 점으로 표시 */
+  word-wrap: break-word;
 }
 
 .info-container {

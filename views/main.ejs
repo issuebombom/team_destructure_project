@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/main/main.css" rel="stylesheet">
-  <script src="/main/main.js"></script>
+  <script src="/main/main.js" defer></script>
   <title>메인페이지</title>
 </head>
 
@@ -32,18 +32,25 @@
     </section>
     <section class="post-container">
       <nav>
-        <button>관심글</button>
-        <button>최신글</button>
+        <button class="get-category-posts">관심글</button>
+        <button class="recent-posts-button">최신글</button>
         <button>글작성</button>
       </nav>
       <!-- ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'] -->
-      <% data.postList.forEach((post, idx)=> { %>
-        <div class="post-card">
-          <a href="#">닉네임: <%= post.nickname %></a>
-          <p>게시글: <%= post.content %>
-          </p>
-        </div>
-        <% }) %>
+
+      <!-- table -->
+
+      <!-- table end -->
+
+      <!-- cards -->
+      <div class="cards">
+        <% data.postList.forEach((post, idx)=> { %>
+          <div class="post-card">
+            <a href="#">닉네임: <%= post.nickname %></a>
+            <span style="display: block;">게시글: <%= post.content %></span>
+          </div>
+          <% }) %>
+      </div>
     </section>
     <section class="info-container">
       <div class="best-top-10">
@@ -64,6 +71,21 @@
 
     </section>
   </main>
+  <table class="table" style="max-width: 800px; height: 400px">
+    <thead>
+      <tr>
+        <th scope="col">게시글 번호</th>
+        <th scope="col">닉네임</th>
+        <th scope="col">제목</th>
+        <th scope="col">내용</th>
+        <th scope="col">카테고리</th>
+      </tr>
+    </thead>
+    <tbody class="table-body">
+      <!-- 여기가 추가될 공간 -->
+    </tbody>
+  </table>
+
 </body>
 
 </html>

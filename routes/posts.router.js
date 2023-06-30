@@ -88,7 +88,7 @@ router.get('/posts/new-post', async (req, res) => {
 });
 
 // 관심사 게시글 조회
-router.get('/main/category/interest', verifyAccessToken, async (req, res) => {
+router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
   try {
     const userId = res.locals.user;
 
