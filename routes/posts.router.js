@@ -1,6 +1,6 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { Posts, Categories } = require('../models');
+const { Posts, Categories, Likes } = require('../models');
 const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
@@ -68,6 +68,12 @@ router.get('/posts/new-post', async (req, res) => {
   try {
     const postList = await Posts.findAll({
       attributes: ['postId', 'nickname', 'categoryList', 'title', 'content'],
+      include: [
+        {
+          model: Likes,
+          attributes: ['likeId'], // []안에 아무 의미없음.
+        },
+      ],
       order: [['createdAt', 'DESC']],
     });
 
@@ -100,6 +106,12 @@ router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
     const categoryPosts = await Posts.findAll({
       attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content', 'img'],
       where: { categoryList: userId.interest },
+      include: [
+        {
+          model: Likes,
+          attributes: ['likeId'],
+        },
+      ],
     });
 
     return res.status(200).json({

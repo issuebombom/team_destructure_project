@@ -4,6 +4,7 @@ const userCategory = async () => {
   try {
     const res = await fetch(`/posts/category/interest`);
     const data = await res.json();
+    console.log(data);
     tableBody.innerHTML = '';
     data.categoryPosts.forEach((info) => {
       console.log(info.content);
@@ -33,3 +34,40 @@ const interestEvent = (() => {
     userCategory();
   });
 })();
+
+// 좋아요 버튼에 이벤트리스너 등록
+document.addEventListener('DOMContentLoaded', () => {
+  // All을 통해 모든like-button을 likeButtons 변수에 저장
+  const likeButtons = document.querySelectorAll('.like-button');
+
+  // forEach를 통해 각각의 좋아요 버튼에 함수 시작
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const postId = button.dataset.postId;
+      console.log(postId);
+      try {
+        const response = await fetch(`/posts/${postId}/like`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+
+        const result = await response.json();
+        // console.log(result);
+
+        if (response.ok) {
+          alert(result.message);
+          const likeCount = document.querySelector(`.like-count-${postId}`);
+          likeCount.innerText = result.likeCount;
+        } else {
+          alert('로그인 후 이용해주세요.');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('좋아요 처리 중 오류가 발생했습니다.');
+      }
+    });
+  });
+});
