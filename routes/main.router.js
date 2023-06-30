@@ -3,8 +3,8 @@ const router = express.Router();
 const { verifyAccessToken } = require('../middleware/auth.middleware');
 const fetch = require('node-fetch'); // html이 아닌 노드 안에서 fetch하려면 필요함
 
-// 메인 페이지 이동
-router.get('/main', verifyAccessToken, async (req, res) => {
+router.get('/main', async (req, res) => {
+
   try {
     const response = await fetch('http://localhost:3000/main');
     const data = await response.json();
