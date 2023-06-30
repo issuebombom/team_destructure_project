@@ -28,7 +28,8 @@
       <label>내용:</label>
       <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
       <br />
-      <input type="file" name="file" id="file" />
+      <input type="file" name="file" id="file" onchange="readURL(this)" />
+      <img id="preview" />
       <br />
       <button tpye="submit" id="createPostBtn">작성</button>
       <button type="button" id="cancelPostBtn">취소</button>
