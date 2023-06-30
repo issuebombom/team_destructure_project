@@ -11,16 +11,16 @@ router.get('/main', async (req, res) => {
 });
 
 // 로그인한 사용자의 카테고리 가져오기
-router.get('/main/interest', verifyAccessToken, async (req, res) => {
-  try {
-    const { interest } = res.locals.user; // 로그인한 유저의 카테고리를 변수에 담음
-    const posts = await Posts.findAll({ categoryList: interest });
-    res.json(posts); // 찾은 카테고리를 전송
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error');
-  }
-});
+// router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
+//   try {
+//     const { interest } = res.locals.user; // 로그인한 유저의 카테고리를 변수에 담음
+//     const posts = await Posts.findAll({ categoryList: interest });
+//     res.json(posts); // 찾은 카테고리를 전송
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Error');
+//   }
+// });
 
 // 게시글 작성 페이지 띄우기
 router.get('/posts', async (req, res) => {
@@ -69,10 +69,10 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
 
 // 최신 게시글 조회 API
 // res는 추후 수정필요 (하나의 파일로 관리하여 오류메세지 통일)
-router.get('/posts/newPost', async (req, res) => {
+router.get('/posts/new-post', async (req, res) => {
   try {
     const postList = await Posts.findAll({
-      attributes: ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'],
+      attributes: ['postId', 'nickname', 'categoryList', 'title', 'content'],
       order: [['createdAt', 'DESC']],
     });
 
@@ -93,7 +93,7 @@ router.get('/posts/newPost', async (req, res) => {
 });
 
 // 관심사 게시글 조회
-router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
+router.get('/main/category/interest', verifyAccessToken, async (req, res) => {
   try {
     const userId = res.locals.user;
 

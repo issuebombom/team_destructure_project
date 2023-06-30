@@ -11,23 +11,25 @@ const categoryList = document.getElementById('categoryList');
 // 메인페이지에서 카테고리 버튼 클릭시 로그인한 유저의 카테고리 관련 게시글 띄우기
 const userCategory = async () => {
   try {
-    const res = await fetch(`/main/interest`);
+    const res = await fetch(`/main/category/interest`);
     const data = await res.json();
-    categoryList.innerHTML = '';
-    data.forEach((info) => {
-      categoryList.innerHTML += `<tr>
-      <th scope="row">${info.Nickname}</th>
-    
-      <td>${info.title}</td>
-    
-      <td>${info.content}</td>
-    
-      <td>${info.categoryList}</td>
-    </tr>;`;
-    });
     console.log(data);
+    categoryList.innerHTML = '';
+    data.categoryPosts.forEach((info) => {
+      categoryList.innerHTML += `<tr>
+        <th scope="row">${info.postId}</th>
+        
+        <td>${info.Nickname}</td>
+        <td>${info.title}</td>
+    
+        <td>${info.content}</td>
+    
+        <td>${info.categoryList}</td>
+      </tr>`;
+    });
+    // console.log(data);
   } catch (error) {
-    console.error(err);
+    console.error(error);
   }
 };
 
@@ -36,3 +38,16 @@ const button = document.querySelector('.posts-check');
 button.addEventListener('click', () => {
   userCategory();
 });
+
+// const dataArray = Object.entries(data);
+//     for (let [key, info] of dataArray) {
+//       categoryList.innerHTML += `<tr>
+//     <th scope="row">${info.Nickname}</th>
+
+//     <td>${info.title}</td>
+
+//     <td>${info.content}</td>
+
+//     <td>${info.categoryList}</td>
+//   </tr>`;
+//     }
