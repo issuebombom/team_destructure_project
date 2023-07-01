@@ -1,6 +1,6 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { Posts, Categories } = require('../models');
+const { Posts, Categories, Likes } = require('../models');
 const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
@@ -81,6 +81,12 @@ router.get('/posts/new-post', async (req, res) => {
   try {
     const postList = await Posts.findAll({
       attributes: ['postId', 'nickname', 'categoryList', 'title', 'content'],
+      include: [
+        {
+          model: Likes,
+          attributes: ['likeId'], // []안에 아무 의미없음.
+        },
+      ],
       order: [['createdAt', 'DESC']],
     });
 
@@ -91,7 +97,7 @@ router.get('/posts/new-post', async (req, res) => {
     }
 
     res.status(200).json({
-      postList: postList,
+      postList,
     });
   } catch {
     return res.status(400).json({
@@ -110,11 +116,42 @@ router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
         message: '설정된 관심사가 없습니다. 마이페이지에서 관심사를 등록해주세요.',
       });
     }
-    const categoryPosts = await Posts.findAll({
+    const postList = await Posts.findAll({
       attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content', 'img'],
       where: { categoryList: userId.interest },
+      include: [
+        {
+          model: Likes,
+          attributes: ['likeId'],
+        },
+      ],
     });
 
+    return res.status(200).json({
+      postList,
+    });
+  } catch {
+    return res.status(400).json({
+      message: '게시글 조회에 실패하였습니다.',
+    });
+  }
+});
+
+// 카테고리별 게시글 조회
+router.get('/posts/category/:categoryId', verifyAccessToken, async (req, res) => {
+  try {
+    const userId = res.locals.user;
+    const categoryId = req.params.categoryId;
+
+    if (!userId.interest) {
+      return res.status(404).json({
+        message: '설정된 관심사가 없습니다. 마이페이지에서 관심사를 등록해주세요.',
+      });
+    }
+    const categoryPosts = await Posts.findAll({
+      attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content', 'img'],
+      where: { categoryList: categoryId },
+    });
     return res.status(200).json({
       categoryPosts,
     });

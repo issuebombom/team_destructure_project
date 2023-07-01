@@ -54,10 +54,15 @@ nav > * {
   border: 1px solid red;
   padding-left: 5px;
   max-width: 100%;
+  height: auto;
 }
 
+.post-card > span {
+  display: block;
+}
 .post-card > span > img {
   max-width: 100%;
+  height: auto;
 }
 
 .title-card {

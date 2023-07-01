@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/main/main.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script src="/main/main.js" defer></script>
     <title>메인페이지</title>
   </head>
@@ -37,17 +36,17 @@
           <button>글작성</button>
         </nav>
         <!-- ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'] -->
-
-        <!-- table -->
-
-        <!-- table end -->
-
-        <!-- cards -->
+             <!-- cards -->
         <div class="cards">
+          <% data.postList.forEach((post, idx)=> { %>
           <div class="post-card">
-            <a href="#">닉네임:</a>
-            <span style="display: block"></span>
+            <a href="#">닉네임: <%= post.nickname %></a>
+            <span style="display: block">게시글: <%=post.content %></span>
+            <!-- 좋아요 버튼 👍 추가-->
+            <button class="like-button" data-post-id="<%= post.postId %>">👍</button>
+            <span class="like-count-<%= post.postId %>"><%= post.Likes.length %></span>
           </div>
+          <% }) %>
         </div>
       </section>
       <section class="info-container">
@@ -66,21 +65,10 @@
             <a>야 나두!...</a>
           </div>
         </div>
-      </section>
-    </main>
-    <table class="table" style="max-width: 800px; height: 400px">
-      <thead>
-        <tr>
-          <th scope="col">게시글 번호</th>
-          <th scope="col">닉네임</th>
-          <th scope="col">제목</th>
-          <th scope="col">내용</th>
-          <th scope="col">카테고리</th>
-        </tr>
-      </thead>
-      <tbody class="table-body">
-        <!-- 여기가 추가될 공간 -->
-      </tbody>
-    </table>
-  </body>
+
+      </div>
+    </section>
+  </main>
+</body>
 </html>
+

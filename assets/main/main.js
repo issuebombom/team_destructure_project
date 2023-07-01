@@ -1,16 +1,13 @@
-$(document).ready(() => {
-  getPosts();
-});
-
-// 메인페이지에서 카테고리 버튼 클릭시 로그인한 유저의 카테고리 관련 게시글 띄우기
-const userCategory = async () => {
-  const tableBody = document.querySelector('.table-body');
+// 게시글 가져오기 Fetch 후 결과 가져오기
+const spreadPost = async (path) => {
+  const cards = document.querySelector('.cards');
   try {
-    const res = await fetch(`/posts/category/interest`);
+    const res = await fetch(path);
     const data = await res.json();
+    
     tableBody.innerHTML = '';
     data.categoryPosts.forEach((info) => {
-      console.log(info.content);
+
       //* 각 테이블 내 셀의 크기가 조정될 수 있다면 이미지는 보여집니다.
       //* 현재 셀 크기가 크고 작고를 떠나서...크기 설정이 안되어 있으면 글자가 잘리는 것 같습니다.
       tableBody.innerHTML += `
@@ -21,7 +18,7 @@ const userCategory = async () => {
                         <td>${info.content} ${imageTag}</td>
                         <td>${info.categoryList}</td>
                     </tr>
-                    `;
+
     });
   } catch (error) {
     console.error(error);
@@ -29,49 +26,57 @@ const userCategory = async () => {
   // console.log(data);
 };
 
-// 이벤트 버튼선택자로 버튼 가져오고 >> 이벤트유저 클릭이벤트유저 카테고리 이벤트 실행
+// 관심글 버튼 작동
 const interestEvent = (() => {
-  const CategoryButton = document.querySelector('.get-category-posts');
+  const interestButton = document.querySelector('.interest-post-button');
 
-  CategoryButton.addEventListener('click', () => {
-    userCategory();
+  interestButton.addEventListener('click', () => {
+    spreadPost('/posts/category/interest');
   });
 })();
 
-const printPosts = document.querySelector('.cards');
+// 최신글 버튼 작동
+const recentEvent = (() => {
+  const recentButton = document.querySelector('.recent-posts-button');
 
-function getPosts() {
-  $.ajax({
-    method: 'GET',
-    url: '/posts/new-post',
-    success: (data) => {
-      let posts = data.postList;
-      let results = [];
-      console.log(posts);
-      posts.forEach((post) => {
-        const content = post.content.split('<img')[0];
-        const img = '<img' + post.content.split('<img')[1];
-        results += `
-  <div class="post-card" data-postid=${post.postId}>
-  <span>${post.postId}번 게시글</span>
-    <a> 닉네임: ${post.nickname}</a>
-    <span style="display: block"> 게시글 : ${content} ${img}</span>
-    </div>
-    `;
-      });
-      printPosts.innerHTML = results;
-
-      $('.post-card').on('click', function () {
-        const postId = $(this).data('postid');
-        click(postId);
-      });
-    },
-    error: (err) => {
-      console.log(err);
-    },
+  recentButton.addEventListener('click', () => {
+    spreadPost('/posts/new-post');
   });
-}
-function click(postId) {
-  console.log(postId);
-  (window.location.href = `/posts/${postId}`), '_parents';
-}
+})();
+
+// 좋아요 버튼에 이벤트리스너 등록
+document.addEventListener('DOMContentLoaded', () => {
+  // All을 통해 모든like-button을 likeButtons 변수에 저장
+  const likeButtons = document.querySelectorAll('.like-button');
+
+  // forEach를 통해 각각의 좋아요 버튼에 함수 시작
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const postId = button.dataset.postId;
+      console.log(postId);
+      try {
+        const response = await fetch(`/posts/${postId}/like`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+
+        const result = await response.json();
+        // console.log(result);
+
+        if (response.ok) {
+          alert(result.message);
+          const likeCount = document.querySelector(`.like-count-${postId}`);
+          likeCount.innerText = result.likeCount;
+        } else {
+          alert('로그인 후 이용해주세요.');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('좋아요 처리 중 오류가 발생했습니다.');
+      }
+    });
+  });
+});
