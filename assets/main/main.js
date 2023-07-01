@@ -4,21 +4,19 @@ const spreadPost = async (path) => {
   try {
     const res = await fetch(path);
     const data = await res.json();
-    
-    tableBody.innerHTML = '';
-    data.categoryPosts.forEach((info) => {
-
+    console.log(data);
+    cards.innerHTML = '';
+    data.postList.forEach((info) => {
       //* 각 테이블 내 셀의 크기가 조정될 수 있다면 이미지는 보여집니다.
       //* 현재 셀 크기가 크고 작고를 떠나서...크기 설정이 안되어 있으면 글자가 잘리는 것 같습니다.
-      tableBody.innerHTML += `
+      cards.innerHTML += `
                     <tr>
                       <th scope="row">${info.postId}</th>
                         <td>${info.Nickname}</td>
                         <td>${info.title}</td>
-                        <td>${info.content} ${imageTag}</td>
+                        <td>${info.content} ${info.img}</td>
                         <td>${info.categoryList}</td>
-                    </tr>
-
+                    </tr>`;
     });
   } catch (error) {
     console.error(error);
@@ -28,7 +26,7 @@ const spreadPost = async (path) => {
 
 // 관심글 버튼 작동
 const interestEvent = (() => {
-  const interestButton = document.querySelector('.interest-post-button');
+  const interestButton = document.querySelector('.interest-posts-button');
 
   interestButton.addEventListener('click', () => {
     spreadPost('/posts/category/interest');

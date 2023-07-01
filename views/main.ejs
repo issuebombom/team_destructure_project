@@ -31,17 +31,18 @@
       </section>
       <section class="post-container">
         <nav>
-          <button class="get-category-posts">관심글</button>
+          <button class="interest-posts-button">관심글</button>
           <button class="recent-posts-button">최신글</button>
           <button>글작성</button>
         </nav>
         <!-- ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'] -->
-             <!-- cards -->
+        <!-- cards -->
         <div class="cards">
           <% data.postList.forEach((post, idx)=> { %>
           <div class="post-card">
-            <a href="#">닉네임: <%= post.nickname %></a>
-            <span style="display: block">게시글: <%=post.content %></span>
+            <a href="#" id="postId">게시글 번호<<%= post.postId %>></a>
+            <span>닉네임: <%= post.nickname %></span>
+            <span style="display: block">게시글: <%-post.content %></span>
             <!-- 좋아요 버튼 👍 추가-->
             <button class="like-button" data-post-id="<%= post.postId %>">👍</button>
             <span class="like-count-<%= post.postId %>"><%= post.Likes.length %></span>
@@ -65,10 +66,7 @@
             <a>야 나두!...</a>
           </div>
         </div>
-
-      </div>
-    </section>
-  </main>
-</body>
+      </section>
+    </main>
+  </body>
 </html>
-

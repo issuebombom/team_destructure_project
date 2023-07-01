@@ -15,23 +15,23 @@ router.get('/posts', async (req, res) => {
   res.render('createPost');
 });
 
-// 관심게시글 조회 페이지 띄우기
-router.get('/posts/category/interest', async (req, res) => {
-  const postId = searchParam('postId');
-  try {
-    const response = await fetch(`http://127.0.0.1:3000/posts/${postId}`);
-    const postDetail = await response.json();
+// // 관심게시글 조회 페이지 띄우기
+// router.get('/posts/category/interest', async (req, res) => {
+//   const postId = searchParam('postId');
+//   try {
+//     const response = await fetch(`http://127.0.0.1:3000/posts/${postId}`);
+//     const postDetail = await response.json();
 
-    res.render('postsDetail', { postDetail });
-  } catch (err) {
-    console.error(err);
-  }
-});
+//     res.render('postsDetail', { postDetail });
+//   } catch (err) {
+//     console.error(err);
+//   }
+// });
 
-// 상세게시글 조회 페이지 띄우기
-router.get('/posts/detail/:postId', async (req, res) => {
-  res.render('postDetail');
-});
+// // 상세게시글 조회 페이지 띄우기
+// router.get('/posts/detail/:postId', async (req, res) => {
+//   res.render('postDetail');
+// });
 
 // 게시글 작성
 router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async (req, res) => {
@@ -80,7 +80,7 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
 router.get('/posts/new-post', async (req, res) => {
   try {
     const postList = await Posts.findAll({
-      attributes: ['postId', 'nickname', 'categoryList', 'title', 'content'],
+      attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content'],
       include: [
         {
           model: Likes,
