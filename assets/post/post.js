@@ -34,6 +34,7 @@ postForm.addEventListener('submit', async (event) => {
   }
 });
 
+// 이미지 업로드 시 미리보기 기능
 function readURL(input) {
   if (input.files && input.files[0]) {
     let reader = new FileReader();

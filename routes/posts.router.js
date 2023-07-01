@@ -4,15 +4,33 @@ const { Posts, Categories } = require('../models');
 const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
+const fetch = require('node-fetch');
+
+const searchParam = function (key) {
+  return new URLSearchParams(location.search).get(key);
+};
 
 // 게시글 작성 페이지 띄우기
 router.get('/posts', async (req, res) => {
-  res.render('createPost.ejs');
+  res.render('createPost');
 });
 
 // 관심게시글 조회 페이지 띄우기
 router.get('/posts/category/interest', async (req, res) => {
-  res.render('posts.ejs');
+  const postId = searchParam('postId');
+  try {
+    const response = await fetch(`http://127.0.0.1:3000/posts/${postId}`);
+    const postDetail = await response.json();
+
+    res.render('postsDetail', { postDetail });
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+// 상세게시글 조회 페이지 띄우기
+router.get('/posts/detail/:postId', async (req, res) => {
+  res.render('postDetail');
 });
 
 // 게시글 작성
@@ -29,7 +47,7 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
     }
 
     const imageTag = filepath
-      ? `<img src="${filepath}" alt="게시글 이미지" style="width: 50px;">`
+      ? `<img src="${filepath}" alt="게시글 이미지"onerror="this.src = this.src.replace(/\/thumb\//, '/original/'); style="width: 50px"/>`
       : '';
     const updatedContent = `${content} ${imageTag}`;
     // text사이에 img 삽입하는 방법을 찾아봐야함
