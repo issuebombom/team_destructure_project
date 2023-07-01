@@ -96,12 +96,14 @@ changeNicknameBtn.addEventListener('click', changeNickname);
 // 관심사 변경하기
 const changeInterestBtn = document.getElementById('changeInterestBtn');
 const changeInterest = async () => {
-  // 새로운 관심사를 받고,
+  // prompt에 관심사를 받고,
   const newInterest = prompt(
-    `    다음 관심사 중에서 하나를 선택해주세요 :-)
+    `    다음 관심사 중에서 하나를 선택해주세요.
     ['Music', 'Restaurant', 'Exercise', 'Movie', 'Travel']`
   );
-  // true 값이라면,
+  // 입력받은 값을 대문자로 변환하고,
+  const upperCaseInput = newInterest.toUpperCase();
+  // 입력받은 값이 true 값이라면,
   if (newInterest) {
     try {
       // 해당 URI로 PUT요청을 보냄.
@@ -112,7 +114,7 @@ const changeInterest = async () => {
           'Content-Type': 'application/json',
         },
         // 바디에 값을 제이슨 형식으로 전달한다.
-        body: JSON.stringify({ interest: newInterest }),
+        body: JSON.stringify({ interest: upperCaseInput }),
         // 전달해서 로직을 수행하고,
       });
       // 제이슨 형태로 결과값을 받는다.
@@ -149,7 +151,7 @@ const changePassword = async () => {
           'Content-Type': 'application/json',
         },
         // 바디에 값을 제이슨 형식으로 전달한다.
-        body: JSON.stringify({ password: newPassword }),
+        body: JSON.stringify({ newPassword, confirm: newPassword }),
         // 전달해서 로직을 수행하고,
       });
       // 제이슨 형태로 결과값을 받는다.
@@ -170,8 +172,39 @@ const changePassword = async () => {
 // 버튼 클릭시 이벤트 실행
 changePasswordBtn.addEventListener('click', changePassword);
 
-// 회원 탈퇴하기 // 코드 작성 필요
+// 회원 탈퇴하기
+const userFireBtn = document.getElementById('userFireBtn');
 const userFire = async () => {
-  const res = await fetch(`/mypage/userfire`);
-  const data = await res.json();
+  // 현재 비밀번호를 받아서,
+  const confirm = prompt(`회원탈퇴 진행을 위해 현재 비밀번호를 입력해주세요.`);
+  // true 값이라면,
+  if (confirm) {
+    try {
+      // 해당 URI로 DELETE요청을 보냄.
+      const res = await fetch('/mypage/userfire', {
+        method: 'DELETE',
+        // 바디에 있는 값을 JSON형태로 전송하겠다.
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // 바디에 값을 제이슨 형식으로 전달한다.
+        body: JSON.stringify({ deletePassword: confirm }),
+        // 전달해서 로직을 수행하고,
+      });
+      // 제이슨 형태로 결과값을 받는다.
+      await res.json().then((result) => {
+        const errorMessage = result.errorMessage;
+        if (errorMessage) {
+          alert(result.errorMessage);
+        } else {
+          alert(result.message);
+          window.location.reload();
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
 };
+// 버튼 클릭시 이벤트 실행
+userFireBtn.addEventListener('click', userFire);
