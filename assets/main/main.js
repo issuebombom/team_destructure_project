@@ -4,14 +4,21 @@ const spreadPost = async (path) => {
   try {
     const res = await fetch(path);
     const data = await res.json();
-    cards.innerHTML = '';
-    data.postList.forEach((info) => {
-      cards.innerHTML += `
-                    <div class="post-card">
-                      <a href="#">닉네임: ${info.Nickname}</a>
-                      <span>게시글: ${info.content}</span>
-                    </div>
-                    `;
+    
+    tableBody.innerHTML = '';
+    data.categoryPosts.forEach((info) => {
+
+      //* 각 테이블 내 셀의 크기가 조정될 수 있다면 이미지는 보여집니다.
+      //* 현재 셀 크기가 크고 작고를 떠나서...크기 설정이 안되어 있으면 글자가 잘리는 것 같습니다.
+      tableBody.innerHTML += `
+                    <tr>
+                      <th scope="row">${info.postId}</th>
+                        <td>${info.Nickname}</td>
+                        <td>${info.title}</td>
+                        <td>${info.content}</td>
+                        <td style="width: 30px">${info.categoryList}</td>
+                    </tr>
+
     });
   } catch (error) {
     console.error(error);
@@ -35,3 +42,40 @@ const recentEvent = (() => {
     spreadPost('/posts/new-post');
   });
 })();
+
+// 좋아요 버튼에 이벤트리스너 등록
+document.addEventListener('DOMContentLoaded', () => {
+  // All을 통해 모든like-button을 likeButtons 변수에 저장
+  const likeButtons = document.querySelectorAll('.like-button');
+
+  // forEach를 통해 각각의 좋아요 버튼에 함수 시작
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const postId = button.dataset.postId;
+      console.log(postId);
+      try {
+        const response = await fetch(`/posts/${postId}/like`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+
+        const result = await response.json();
+        // console.log(result);
+
+        if (response.ok) {
+          alert(result.message);
+          const likeCount = document.querySelector(`.like-count-${postId}`);
+          likeCount.innerText = result.likeCount;
+        } else {
+          alert('로그인 후 이용해주세요.');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('좋아요 처리 중 오류가 발생했습니다.');
+      }
+    });
+  });
+});
