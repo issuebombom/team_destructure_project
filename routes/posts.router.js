@@ -67,7 +67,7 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
 router.get('/posts/new-post', async (req, res) => {
   try {
     const postList = await Posts.findAll({
-      attributes: ['postId', 'nickname', 'categoryList', 'title', 'content'],
+      attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content'],
       include: [
         {
           model: Likes,
