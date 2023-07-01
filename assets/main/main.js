@@ -1,13 +1,12 @@
-// 메인페이지에서 카테고리 버튼 클릭시 로그인한 유저의 카테고리 관련 게시글 띄우기
-const userCategory = async () => {
-  const tableBody = document.querySelector('.table-body');
+// 게시글 가져오기 Fetch 후 결과 가져오기
+const spreadPost = async (path) => {
+  const cards = document.querySelector('.cards');
   try {
-    const res = await fetch(`/posts/category/interest`);
+    const res = await fetch(path);
     const data = await res.json();
-    console.log(data);
+    
     tableBody.innerHTML = '';
     data.categoryPosts.forEach((info) => {
-      console.log(info.content);
 
       //* 각 테이블 내 셀의 크기가 조정될 수 있다면 이미지는 보여집니다.
       //* 현재 셀 크기가 크고 작고를 떠나서...크기 설정이 안되어 있으면 글자가 잘리는 것 같습니다.
@@ -19,19 +18,28 @@ const userCategory = async () => {
                         <td>${info.content}</td>
                         <td style="width: 30px">${info.categoryList}</td>
                     </tr>
-                    `;
+
     });
   } catch (error) {
     console.error(error);
   }
 };
 
-// 이벤트 버튼선택자로 버튼 가져오고 >> 이벤트유저 클릭이벤트유저 카테고리 이벤트 실행
+// 관심글 버튼 작동
 const interestEvent = (() => {
-  const CategoryButton = document.querySelector('.get-category-posts');
+  const interestButton = document.querySelector('.interest-post-button');
 
-  CategoryButton.addEventListener('click', () => {
-    userCategory();
+  interestButton.addEventListener('click', () => {
+    spreadPost('/posts/category/interest');
+  });
+})();
+
+// 최신글 버튼 작동
+const recentEvent = (() => {
+  const recentButton = document.querySelector('.recent-posts-button');
+
+  recentButton.addEventListener('click', () => {
+    spreadPost('/posts/new-post');
   });
 })();
 

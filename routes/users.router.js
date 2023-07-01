@@ -104,6 +104,7 @@ router.post('/login', async (req, res) => {
       user.nickname,
       user.userId,
       user.interest,
+      user.email,
       refreshToken
     );
 
