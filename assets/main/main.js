@@ -4,19 +4,27 @@ const spreadPost = async (path) => {
   try {
     const res = await fetch(path);
     const data = await res.json();
-    cards.innerHTML = '';
-    data.postList.forEach((info) => {
-      cards.innerHTML += `
-                    <div class="post-card">
-                      <a href="#">닉네임: ${info.Nickname}</a>
-                      <span>게시글: ${info.content}</span>
-                      <button class="like-button" data-post-id="${info.postId}">👍</button>
-                      <span class="like-count-${info.postId}">
-                        ${info.Likes.length}
-                      </span>
-                    </div>
-                    `;
-    });
+
+    if (res.ok) {
+      cards.innerHTML = '';
+      data.postList.forEach((post) => {
+        cards.innerHTML += `
+                      <div class="post-card">
+                        <a href="#">게시글 번호: <${post.postId}></a>
+                        <span>닉네임: ${post.Nickname}</span>
+                        <span>카테고리: ${post.categoryList}</span>
+                        <span>게시글: ${post.content}</span>
+                        <button class="like-button" data-post-id="${post.postId}">👍</button>
+                        <span class="like-count-${post.postId}">
+                          ${post.Likes.length}
+                        </span>
+                      </div>
+                      `;
+      });
+    } else {
+      alert(data.msg)
+      window.location.href = '/login'
+    }
   } catch (error) {
     console.error(error);
   }
@@ -37,6 +45,19 @@ const recentEvent = (() => {
 
   recentButton.addEventListener('click', () => {
     spreadPost('/posts/new-post');
+  });
+})();
+
+// 카테고리 버튼 작동 (음악 영화)
+const categoryEvent = (() => {
+  const categoryForm = document.querySelector('.category-form');
+
+  categoryForm.addEventListener('click', (event) => {
+    if (event.target.tagName === 'BUTTON') {
+      // 클릭된 버튼의 value 가져오기
+      const categoryId = event.target.value; // Music 또는 Movie를 가져옵니다.
+      spreadPost(`/posts/category/${categoryId}`);
+    }
   });
 })();
 

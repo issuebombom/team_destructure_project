@@ -13,36 +13,45 @@
   <h1>메인 페이지 입니다!</h1>
   <h2>🅽🅾🅳🅴🅱🅾🅾🅺</h2>
   <header>
-    <a href="#">🏠</a>
+    <a href="/main">🏠</a>
     <form class="login-form">
       <input type="text" name="search" placeholder="검색어 입력" />
       <button type="submit" id="search">검색</button>
     </form>
-    <a href="#" class="mypage">👦🏻</a>
+    <a href="/mypage" class="mypage">👦🏻</a>
+    <% if (isLoggedIn) { %>
     <form action="/logout" method="GET">
-      <button type="submit" class="logout-button">login</button>
+      <button type="submit" class="logout-button">logout</button>
     </form>
+    <% } else { %>
+      <form action="/login" method="GET">
+        <button type="submit" class="login-button">login</button>
+      </form>
+    <% } %>
   </header>
   <main>
     <section class="categories-container">
-      <button>운동</button>
-      <button>영화</button>
-      <button>맛집</button>
-      <button>기타</button>
+      <form class="category-form">
+        <button type="button" value="Music" class="music-button">음악</button>
+        <button type="button" value="Movie" class="movie-button">영화</button>
+      </form>
     </section>
     <section class="post-container">
       <nav>
         <button class="interest-posts-button">관심글</button>
         <button class="recent-posts-button">최신글</button>
-        <button>글작성</button>
+        <form action="/posts" method="GET">
+          <button>글작성</button>
+        </form>
       </nav>
-      <!-- ['postId', 'nickname', 'categoryList', 'title', 'content', 'img'] -->
       <!-- cards -->
       <div class="cards">
         <% data.postList.forEach((post, idx)=> { %>
           <div class="post-card">
-            <a href="#">닉네임: <%= post.nickname %></a>
-            <span style="display: block">게시글: <%-post.content %></span>
+            <a href="#">게시글 번호: <<%= post.postId %>></a>
+            <span>닉네임: <%= post.Nickname %></span>
+            <span>카테고리: <%= post.categoryList %></span>
+            <span>게시글: <%-post.content %></span>
             <!-- 좋아요 버튼 👍 추가-->
             <button class="like-button" data-post-id="<%= post.postId %>">👍</button>
             <span class="like-count-<%= post.postId %>">

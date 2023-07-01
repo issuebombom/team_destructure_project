@@ -132,7 +132,8 @@ router.get('/logout', verifyAccessToken, async (req, res) => {
   try {
     const user = res.locals.user;
     res.clearCookie('accessCookie');
-    res.send({ message: `${user.nickname}님이 로그아웃 되었습니다.` });
+    // res.send({ message: `${user.nickname}님이 로그아웃 되었습니다.` });
+    res.redirect('/main')
   } catch {
     console.error(err.name, ':', err.message);
     return res.status(400).send({ msg: `${err.message}` });
