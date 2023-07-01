@@ -4,19 +4,18 @@ const spreadPost = async (path) => {
   try {
     const res = await fetch(path);
     const data = await res.json();
-    console.log(data);
     cards.innerHTML = '';
     data.postList.forEach((info) => {
-      //* 각 테이블 내 셀의 크기가 조정될 수 있다면 이미지는 보여집니다.
-      //* 현재 셀 크기가 크고 작고를 떠나서...크기 설정이 안되어 있으면 글자가 잘리는 것 같습니다.
       cards.innerHTML += `
-                    <tr>
-                      <th scope="row">${info.postId}</th>
-                        <td>${info.Nickname}</td>
-                        <td>${info.title}</td>
-                        <td>${info.content} ${info.img}</td>
-                        <td>${info.categoryList}</td>
-                    </tr>`;
+                    <div class="post-card">
+                      <a href="#">닉네임: ${info.Nickname}</a>
+                      <span>게시글: ${info.content}</span>
+                      <button class="like-button" data-post-id="${info.postId}">👍</button>
+                      <span class="like-count-${info.postId}">
+                        ${info.Likes.length}
+                      </span>
+                    </div>
+                    `;
     });
   } catch (error) {
     console.error(error);
@@ -62,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const result = await response.json();
-        // console.log(result);
 
         if (response.ok) {
           alert(result.message);
