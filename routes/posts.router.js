@@ -18,7 +18,10 @@ router.get('/posts/:postId', async (req, res) => {
 
 // 상세게시글 조회 페이지 띄우기
 router.get('/posts/detail/:postId', async (req, res) => {
-  res.render('postDetail');
+  const postId = req.params.postId;
+  res.render('postDetail', {
+    postId,
+  });
 });
 
 // 게시글 작성
@@ -35,7 +38,7 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
     }
 
     const imageTag = filepath
-      ? `<img src="${filepath}" alt="게시글 이미지"onerror="this.src = this.src.replace(/\/thumb\//, '/original/'); style="width: 50px"/>`
+      ? `<img src="${filepath}" alt="게시글 이미지"onerror="this.src = this.src.replace(/\/thumb\//, '/original/'); style="width: 200px"/>`
       : '';
     const updatedContent = `${content} ${imageTag}`;
     // text사이에 img 삽입하는 방법을 찾아봐야함
@@ -216,11 +219,10 @@ router.get('/lookup', async (req, res) => {
 });
 
 // 게시글 수정
-router.put('/posts/:postId', verifyAccessToken, async (req, res) => {
+router.put('/posts/:postId', async (req, res) => {
   try {
-    const { postId } = req.params;
-    const { userId } = res.locals.user;
-    const { categoryList, title, content } = req.body;
+    const { postId, categoryList, title, content } = req.body;
+    console.log(postId, categoryList);
 
     const modifyPost = await Posts.findOne({ where: { postId } });
     if (!modifyPost) {
@@ -228,10 +230,7 @@ router.put('/posts/:postId', verifyAccessToken, async (req, res) => {
     } else if (!categoryList || !title || !content) {
       return res.status(400).json({ message: '카테고리, 제목, 내용을 입력해주세요.' });
     } else {
-      await Posts.update(
-        { categoryList, title, content },
-        { where: { [Op.and]: [{ postId }, { UserId: userId }] } }
-      );
+      await Posts.update({ categoryList, title, content }, { where: { [Op.and]: [{ postId }] } });
       return res.status(201).json({
         message: '게시글 수정 완료',
       });

@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
 const userTag = document.querySelector('.user-tag');
 
 // 유저의 게시글 조회태그
-const userPostTag = document.querySelector('.user-post-tag');
+const userPostTag = document.querySelector('#userPostTag');
 
 // 유저의 댓글 조회태그
-const userCommentTag = document.querySelector('.user-comment-tag');
+const userCommentTag = document.querySelector('#userCommentTag');
 
 // fetch로 정보 받아와서 json()화 시키기.
 const userData = async () => {
@@ -22,27 +22,30 @@ const userData = async () => {
 
   // 유저 정보 뿌리기
   userTag.innerHTML = `
-                        <li>Nickname : ${user.nickname}</li>
-                        <li>Email : ${user.email}</li>
-                        <li>Interest : ${user.interest}</li>
+                        <li>👫Nickname : ${user.nickname}</li>
+                        <li>✉Email : ${user.email}</li>
+                        <li>💓Interest : ${user.interest}</li>
                       `;
 
   // 게시글 정보 뿌리기
   posts.forEach((myPostInfo) => {
+    console.log(myPostInfo);
     userPostTag.innerHTML += `
-                              <li>Title : ${myPostInfo.title}</li>
-                              <li>Content : ${myPostInfo.content}</li>
-                              <li>Date : ${myPostInfo.date}</li>
-                              <p></p>
+                            <div class="post-card">
+                            <span id="post-title">제목: ${myPostInfo.title}</span>
+                            <span id="post-content">내용: ${myPostInfo.content}</span>
+                            <span id="post-date">생성일: ${myPostInfo.date}</span>
+                          </div>
                             `;
   });
 
   // 댓글 정보 뿌리기
   comments.forEach((myCommentInfo) => {
     userCommentTag.innerHTML += `
-                                  <li>Content : ${myCommentInfo.content}</li>
-                                  <li>Date : ${myCommentInfo.date}</li>
-                                  <p></p>
+                                <div class="comment-card">
+                                <span id="comment-content">내용: ${myCommentInfo.content}</span>
+                                <span id="comment-date">생성일: ${myCommentInfo.date}</span>
+                              </div>
                                 `;
   });
 };
@@ -138,11 +141,14 @@ changeInterestBtn.addEventListener('click', changeInterest);
 // 비밀번호 변경하기
 const changePasswordBtn = document.getElementById('changePasswordBtn');
 const changePassword = async () => {
-  // 새로운 관심사를 받고,
+  // 새로운 패스워드를 받고,
   const newPassword = prompt(`영문 대소문자 및 숫자로 3글자 이상의 암호를 입력해주세요.`);
+
   // true 값이라면,
   if (newPassword) {
     try {
+      // 새로운 패스워드 확인하기.
+      const newPasswordConfirm = prompt(`새로운 비밀번호를 다시 한 번 입력해주세요.`);
       // 해당 URI로 PUT요청을 보냄.
       const res = await fetch('/mypage/password', {
         method: 'PUT',
@@ -151,7 +157,7 @@ const changePassword = async () => {
           'Content-Type': 'application/json',
         },
         // 바디에 값을 제이슨 형식으로 전달한다.
-        body: JSON.stringify({ newPassword, confirm: newPassword }),
+        body: JSON.stringify({ newPassword, newPasswordConfirm }),
         // 전달해서 로직을 수행하고,
       });
       // 제이슨 형태로 결과값을 받는다.
