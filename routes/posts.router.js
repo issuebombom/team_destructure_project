@@ -138,22 +138,21 @@ router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
 });
 
 // 카테고리별 게시글 조회
-router.get('/posts/category/:categoryId', verifyAccessToken, async (req, res) => {
+router.get('/posts/category/:categoryId', async (req, res) => {
   try {
-    const userId = res.locals.user;
     const categoryId = req.params.categoryId;
-
-    if (!userId.interest) {
-      return res.status(404).json({
-        message: '설정된 관심사가 없습니다. 마이페이지에서 관심사를 등록해주세요.',
-      });
-    }
-    const categoryPosts = await Posts.findAll({
+    const postList = await Posts.findAll({
       attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content', 'img'],
       where: { categoryList: categoryId },
+      include: [
+        {
+          model: Likes,
+          attributes: ['likeId'],
+        },
+      ],
     });
     return res.status(200).json({
-      categoryPosts,
+      postList,
     });
   } catch {
     return res.status(400).json({

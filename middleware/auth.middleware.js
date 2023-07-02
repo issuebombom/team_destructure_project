@@ -80,6 +80,34 @@ function verifyAccessToken(req, res, next) {
   });
 }
 
+// 로그인 되어있는 상태인지 아닌지를 확인합니다.
+async function isLoggedIn(req, res, next) {
+  try {
+    const cookies = req.cookies;
+
+    // 쿠키가 없는 경우
+    if (!cookies?.accessCookie) {
+      res.locals.isloggedIn = false;
+      return next();
+    }
+
+    // access token 검증
+    const accessToken = cookies.accessCookie;
+    jwt.verify(accessToken, process.env.ACCESS_TOKEN_KEY, async (err) => {
+      if (err) {
+        res.locals.isloggedIn = false;
+        return next();
+      } else {
+        res.locals.isloggedIn = true;
+      }
+      next();
+    });
+  } catch (err) {
+    console.error(err.name, ':', err.message);
+    return res.status(400).send({ msg: `${err.message}` });
+  }
+}
+
 // // 게시글 수정 권한 검증을 위한 미들웨어
 // async function verificationForPosts(req, res, next) {
 //   const postId = req.params.postId;
@@ -128,6 +156,7 @@ module.exports = {
   getAccessToken,
   getRefreshToken,
   verifyAccessToken,
+  isLoggedIn,
   // verificationForPosts,
   // verificationForComments,
 };
