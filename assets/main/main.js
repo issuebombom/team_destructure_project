@@ -30,8 +30,8 @@ const spreadPost = async (path) => {
                       `;
       });
     } else {
-      alert(data.msg);
-      window.location.href = '/login';
+      alert(data.message);
+      // window.location.href = '/login';
     }
   } catch (error) {
     console.error(error);
@@ -56,7 +56,7 @@ const recentEvent = (() => {
   });
 })();
 
-// 카테고리 버튼 작동 (음악 영화)
+// 카테고리 버튼 작동
 const categoryEvent = (() => {
   const categoryForm = document.querySelector('.category-form');
 
@@ -68,6 +68,17 @@ const categoryEvent = (() => {
     }
   });
 })();
+
+// 키워드 검색
+const searchEvent = (() => {
+  const searchForm = document.querySelector('.search-form');
+
+  searchForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const searchKeyword = event.target[0].value
+    spreadPost(`/lookup?keyword=${searchKeyword}`);
+  })
+})()
 
 // 좋아요 버튼에 이벤트리스너 등록
 document.addEventListener('DOMContentLoaded', () => {
