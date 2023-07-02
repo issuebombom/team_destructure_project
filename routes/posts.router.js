@@ -293,7 +293,9 @@ router.delete('/posts/:postId', verifyAccessToken, async (req, res) => {
           [Op.and]: [{ postId }, { UserId: userId }],
         },
       });
-      res.status(204).json();
+      return res.status(201).json({
+        message: '게시글 삭제 완료',
+      });
     }
   } catch {
     return res.status(400).json({
