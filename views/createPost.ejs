@@ -3,12 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="/post/post.css" rel="stylesheet" />
     <title>게시글 작성</title>
   </head>
   <body>
-    <header>
-      <a href="/main" id="homeBtn"><img src="../assets/image/home.png" alt="홈으로 가기" /></a>
-      <h1 id="title">NODE BOOK</h1>
+    <header class="header-container">
+      <a href="/main" id="homeBtn">HOME</a>
+      <h1 id="title">ɴᴏᴅᴇ ʙᴏᴏᴋ</h1>
     </header>
     <form class="postForm" enctype="multipart/form-data">
       <label>제목:</label>
@@ -20,7 +22,7 @@
         <option value="Movie">영화</option>
         <option value="Restaurant">맛집</option>
         <option value="Exercise">운동</option>
-        <option value="Trave">여행</option>
+        <option value="Travel">여행</option>
       </select>
       <br />
       <label>내용:</label>
