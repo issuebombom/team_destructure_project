@@ -1,14 +1,20 @@
 const express = require('express');
 const { Op } = require('sequelize');
 const { Posts, Categories, Likes } = require('../models');
-const { verifyAccessToken } = require('../middleware/auth.middleware');
+const { verifyAccessToken, isLoggedIn } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
+const errors = require('../assets/errors');
 const router = express.Router();
 const fetch = require('node-fetch');
 
-// 게시글 작성 페이지 띄우기
-router.get('/posts', async (req, res) => {
-  res.render('createPost');
+// 게시글 작성 페이지 띄우기 (비 로그인 시 로그인 페이지로 이동)
+router.get('/posts', isLoggedIn, async (req, res) => {
+  const isLoggedIn = res.locals.isLoggedIn;
+  if (!isLoggedIn) {
+    res.render('login');
+  } else {
+    res.render('createPost');
+  }
 });
 
 // 게시글 수정 페이지 띄우기
@@ -190,26 +196,32 @@ router.get('/posts/details/:postId', async (req, res) => {
 // 게시글 검색 기능
 router.get('/lookup', async (req, res) => {
   try {
-    const { title, content, nickname } = req.query;
-
-    if (!title && !content && !nickname) {
+    // const { title, content, nickname } = req.query;
+    const searchKeyword = req.query.keyword;
+    if (searchKeyword.trim() === '') {
       return res.status(400).json({
         message: '검색어를 입력해주세요.',
       });
     }
 
-    const searchPost = await Posts.findAll({
+    const postList = await Posts.findAll({
       attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content', 'img'],
       where: {
         [Op.or]: [
-          { title: { [Op.like]: `%${title}%` } },
-          { content: { [Op.like]: `%${content}%` } },
-          { nickname: { [Op.like]: `%${nickname}%` } },
+          { title: { [Op.like]: `%${searchKeyword}%` } },
+          { content: { [Op.like]: `%${searchKeyword}%` } },
+          { nickname: { [Op.like]: `%${searchKeyword}%` } },
         ],
       },
+      include: [
+        {
+          model: Likes,
+          attributes: ['likeId'],
+        },
+      ],
     });
     return res.status(200).json({
-      searchPost,
+      postList,
     });
   } catch {
     return res.status(400).json({

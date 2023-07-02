@@ -6,7 +6,7 @@ const fetch = require('node-fetch'); // html이 아닌 노드 안에서 fetch하
 // 메인 페이지 이동
 router.get('/main', isLoggedIn, async (req, res) => {
   // 로그인 상태를 파악합니다.
-  const isLoggedIn = res.locals.isloggedIn;
+  const isLoggedIn = res.locals.isLoggedIn;
 
   try {
     const response = await fetch('http://127.0.0.1:3000/main/new-post');
