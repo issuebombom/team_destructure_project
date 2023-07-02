@@ -31,7 +31,7 @@ function verifyAccessToken(req, res, next) {
 
   // 쿠키가 없는 경우
   if (!cookies?.accessCookie)
-    return res.status(errors.noCookie.status).send({ msg: errors.noCookie.msg });
+    return res.status(errors.noCookie.status).send({ message: errors.noCookie.msg });
 
   // access token 검증
   const accessToken = cookies.accessCookie;
@@ -53,7 +53,7 @@ function verifyAccessToken(req, res, next) {
         if (innerDatabaseRefreshToken !== innerCookieRefreshToken)
           return res
             .status(errors.refreshTokenDiff.status)
-            .send({ msg: errors.refreshTokenDiff.msg });
+            .send({ message: errors.refreshTokenDiff.msg });
 
         // 리프레시 토큰 재발급 및 데이터베이스 저장
         const refreshToken = getRefreshToken(user.nickname, user.userId);
@@ -72,7 +72,7 @@ function verifyAccessToken(req, res, next) {
         console.log('엑세스 토큰 만료로 재발급 진행');
       } catch (err) {
         console.error(err.name, ':', err.message);
-        return res.status(400).send({ msg: `${err.message}` });
+        return res.status(400).send({ message: `${err.message}` });
       }
     }
     res.locals.user = req.user;
@@ -104,59 +104,13 @@ async function isLoggedIn(req, res, next) {
     });
   } catch (err) {
     console.error(err.name, ':', err.message);
-    return res.status(400).send({ msg: `${err.message}` });
+    return res.status(400).send({ message: `${err.message}` });
   }
 }
-
-// // 게시글 수정 권한 검증을 위한 미들웨어
-// async function verificationForPosts(req, res, next) {
-//   const postId = req.params.postId;
-//   const userId = res.locals.user.userId; // 미들웨어 토큰에서 가져온 정보
-
-//   try {
-//     const findPost = await Posts.findByPk(postId);
-
-//     if (!findPost) return res.status(errors.noPost.status).send({ msg: errors.noPost.msg });
-
-//     if (findPost.userId !== userId)
-//       return res.status(errors.cantChangePost.status).send({ msg: errors.cantChangePost.msg });
-//     next();
-//   } catch (err) {
-//     console.error(err.name, ':', err.message);
-//     return res.status(400).send({ msg: `${err.message}` });
-//   }
-// }
-
-// // 댓글 수정 권한 검증을 위한 미들웨어
-// async function verificationForComments(req, res, next) {
-//   const { postId, commentId } = req.params;
-//   const userId = res.locals.user.userId; // 미들웨어 토큰에서 가져온 정보
-
-//   try {
-//     const findPost = await Posts.findByPk(postId);
-//     const findComment = await Comments.findByPk(commentId);
-
-//     if (!findPost) return res.status(errors.noPost.status).send({ msg: errors.noPost.msg });
-
-//     if (!findComment)
-//       return res.status(errors.noComment.status).send({ msg: errors.noComment.msg });
-
-//     if (findComment.userId !== userId)
-//       return res
-//         .status(errors.cantChangeComment.status)
-//         .send({ msg: errors.cantChangeComment.msg });
-//     next();
-//   } catch (err) {
-//     console.error(err.name, ':', err.message);
-//     return res.status(400).send({ msg: `${err.message}` });
-//   }
-// }
 
 module.exports = {
   getAccessToken,
   getRefreshToken,
   verifyAccessToken,
   isLoggedIn,
-  // verificationForPosts,
-  // verificationForComments,
 };

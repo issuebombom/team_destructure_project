@@ -11,9 +11,9 @@ const fetch = require('node-fetch');
 router.get('/posts', isLoggedIn, async (req, res) => {
   const isLoggedIn = res.locals.isLoggedIn;
   if (!isLoggedIn) {
-    res.render('login')
+    res.render('login');
   } else {
-    res.render('createPost')
+    res.render('createPost');
   }
 });
 
@@ -196,26 +196,32 @@ router.get('/posts/details/:postId', async (req, res) => {
 // 게시글 검색 기능
 router.get('/lookup', async (req, res) => {
   try {
-    const { title, content, nickname } = req.query;
-
-    if (!title && !content && !nickname) {
+    // const { title, content, nickname } = req.query;
+    const searchKeyword = req.query.keyword;
+    if (searchKeyword.trim() === '') {
       return res.status(400).json({
         message: '검색어를 입력해주세요.',
       });
     }
 
-    const searchPost = await Posts.findAll({
+    const postList = await Posts.findAll({
       attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content', 'img'],
       where: {
         [Op.or]: [
-          { title: { [Op.like]: `%${title}%` } },
-          { content: { [Op.like]: `%${content}%` } },
-          { nickname: { [Op.like]: `%${nickname}%` } },
+          { title: { [Op.like]: `%${searchKeyword}%` } },
+          { content: { [Op.like]: `%${searchKeyword}%` } },
+          { nickname: { [Op.like]: `%${searchKeyword}%` } },
         ],
       },
+      include: [
+        {
+          model: Likes,
+          attributes: ['likeId'],
+        },
+      ],
     });
     return res.status(200).json({
-      searchPost,
+      postList,
     });
   } catch {
     return res.status(400).json({
