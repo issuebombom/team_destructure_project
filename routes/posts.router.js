@@ -1,6 +1,6 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { Posts, Categories, Likes } = require('../models');
+const { Users, Posts, Categories, Likes } = require('../models');
 const { verifyAccessToken, isLoggedIn } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const errors = require('../assets/errors');
@@ -23,11 +23,34 @@ router.get('/posts/:postId', async (req, res) => {
 });
 
 // 상세게시글 조회 페이지 띄우기
-router.get('/posts/detail/:postId', async (req, res) => {
-  const postId = req.params.postId;
-  res.render('postDetail', {
-    postId,
-  });
+router.get('/posts/detail/:postId', verifyAccessToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { userId } = res.locals.user;
+
+    // 작성자 본인인지 검증
+    const user = await Users.findByPk(userId, {
+      include: [
+        {
+          model: Posts,
+          attributes: ['postId'],
+        },
+      ],
+    });
+    // 유저가 작성한 포스트 배열 확인
+    const posts = user.Posts;
+    const postIds = posts.map((post) => post.postId);
+    if (!postIds.includes(Number(postId))) {
+      return res.status(412).send({ message: '해당 게시글의 작성자가 아닙니다.' });
+    } else {
+      res.render('postDetail', {
+        postId,
+      });
+    }
+  } catch (err) {
+    console.error(err.name, ':', err.message);
+    return res.status(400).send({ msg: `${err.message}` });
+  }
 });
 
 // 게시글 작성
