@@ -23,7 +23,7 @@ const userData = async () => {
   // 유저 정보 뿌리기
   userTag.innerHTML = `
                         <li>👫Nickname : ${user.nickname}</li>
-                        <li>✉Email : ${user.email}</li>
+                        <li>💌Email : ${user.email}</li>
                         <li>💓Interest : ${user.interest}</li>
                       `;
 
