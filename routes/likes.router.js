@@ -28,6 +28,8 @@ router.post('/posts/:postId/like', verifyAccessToken, async (req, res) => {
     res.status(400).json({ message: '좋아요 완료실패' });
   }
 });
+
+// 게시글 좋아요 조회 API
 router.get('/posts/:postId/like', async (req, res) => {
   try {
     const { postId } = req.params;
