@@ -4,22 +4,21 @@ const { Posts, Categories, Likes } = require('../models');
 const { verifyAccessToken } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
 const router = express.Router();
-
-// 로그인한 사용자의 카테고리 가져오기
-// router.get('/posts/category/interest', verifyAccessToken, async (req, res) => {
-//   try {
-//     const { interest } = res.locals.user; // 로그인한 유저의 카테고리를 변수에 담음
-//     const posts = await Posts.findAll({ categoryList: interest });
-//     res.json(posts); // 찾은 카테고리를 전송
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Error');
-//   }
-// });
+const fetch = require('node-fetch');
 
 // 게시글 작성 페이지 띄우기
 router.get('/posts', async (req, res) => {
-  res.render('createPost.ejs');
+  res.render('createPost');
+});
+
+// 게시글 수정 페이지 띄우기
+router.get('/posts/:postId', async (req, res) => {
+  res.render('createPost');
+});
+
+// 상세게시글 조회 페이지 띄우기
+router.get('/posts/detail/:postId', async (req, res) => {
+  res.render('postDetail');
 });
 
 // 게시글 작성
@@ -35,7 +34,9 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
       return;
     }
 
-    const imageTag = filepath ? `<img src="${filepath}" alt="게시글 이미지">` : '';
+    const imageTag = filepath
+      ? `<img src="${filepath}" alt="게시글 이미지"onerror="this.src = this.src.replace(/\/thumb\//, '/original/'); style="width: 50px"/>`
+      : '';
     const updatedContent = `${content} ${imageTag}`;
     // text사이에 img 삽입하는 방법을 찾아봐야함
     const post = await Posts.create({
@@ -62,9 +63,9 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
   }
 });
 
-// 최신 게시글 조회 API
+// 최신 게시글 조회 API -> 메인화면 출력되는 곳
 // res는 추후 수정필요 (하나의 파일로 관리하여 오류메세지 통일)
-router.get('/posts/new-post', async (req, res) => {
+router.get('/main/new-post', async (req, res) => {
   try {
     const postList = await Posts.findAll({
       attributes: ['postId', 'Nickname', 'categoryList', 'title', 'content'],
@@ -149,7 +150,7 @@ router.get('/posts/category/:categoryId', async (req, res) => {
 });
 
 // 게시글 상세 조회
-router.get('/posts/:postId', async (req, res) => {
+router.get('/posts/details/:postId', async (req, res) => {
   try {
     const { postId } = req.params;
     const postDetail = await Posts.findOne({
@@ -174,7 +175,7 @@ router.get('/posts/:postId', async (req, res) => {
     }
 
     res.status(200).json({
-      Detail: postDetail,
+      post: postDetail,
     });
   } catch {
     return res.status(400).json({

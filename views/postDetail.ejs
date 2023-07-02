@@ -4,8 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/post/postDetail.js" defer></script>
     <link href="/post/post.css" rel="stylesheet" />
-    <title>게시글 작성</title>
+    <title>게시글 상세조회</title>
   </head>
   <body>
     <header class="header-container">
@@ -31,9 +32,9 @@
       <input type="file" name="file" id="file" onchange="readURL(this)" />
       <img id="preview" />
       <br />
-      <button tpye="submit" id="createPostBtn">작성</button>
-      <button type="button" id="cancelPostBtn">취소</button>
+      <button tpye="submit" id="modifytBtn">수정</button>
+      <button type="button" id="deleteBtn">삭제</button>
+      <button type="button" id="cancel">취소</button>
     </form>
   </body>
-  <script src="/post/post.js"></script>
 </html>

@@ -10,7 +10,7 @@ const spreadPost = async (path) => {
       data.postList.forEach((post) => {
         cards.innerHTML += `
                       <div class="post-card">
-                        <a href="#">게시글 번호: <${post.postId}></a>
+                        <a href="/posts/detail/${post.postId}">게시글 번호: <${post.postId}></a>
                         <span>닉네임: ${post.Nickname}</span>
                         <span>카테고리: ${post.categoryList}</span>
                         <span>게시글: ${post.content}</span>
@@ -22,8 +22,8 @@ const spreadPost = async (path) => {
                       `;
       });
     } else {
-      alert(data.msg)
-      window.location.href = '/login'
+      alert(data.msg);
+      window.location.href = '/login';
     }
   } catch (error) {
     console.error(error);
@@ -44,7 +44,7 @@ const recentEvent = (() => {
   const recentButton = document.querySelector('.recent-posts-button');
 
   recentButton.addEventListener('click', () => {
-    spreadPost('/posts/new-post');
+    spreadPost('/main/new-post');
   });
 })();
 
