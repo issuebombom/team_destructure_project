@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
 const userTag = document.querySelector('.user-tag');
 
 // 유저의 게시글 조회태그
-const userPostTag = document.querySelector('.user-post-tag');
+const userPostTag = document.querySelector('#userPostTag');
 
 // 유저의 댓글 조회태그
-const userCommentTag = document.querySelector('.user-comment-tag');
+const userCommentTag = document.querySelector('#userCommentTag');
 
 // fetch로 정보 받아와서 json()화 시키기.
 const userData = async () => {
@@ -22,27 +22,30 @@ const userData = async () => {
 
   // 유저 정보 뿌리기
   userTag.innerHTML = `
-                        <li>Nickname : ${user.nickname}</li>
-                        <li>Email : ${user.email}</li>
-                        <li>Interest : ${user.interest}</li>
+                        <li>👫Nickname : ${user.nickname}</li>
+                        <li>✉Email : ${user.email}</li>
+                        <li>💓Interest : ${user.interest}</li>
                       `;
 
   // 게시글 정보 뿌리기
   posts.forEach((myPostInfo) => {
+    console.log(myPostInfo);
     userPostTag.innerHTML += `
-                              <li>Title : ${myPostInfo.title}</li>
-                              <li>Content : ${myPostInfo.content}</li>
-                              <li>Date : ${myPostInfo.date}</li>
-                              <p></p>
+                            <div class="post-card">
+                            <span id="post-title">제목: ${myPostInfo.title}</span>
+                            <span id="post-content">내용: ${myPostInfo.content}</span>
+                            <span id="post-date">생성일: ${myPostInfo.date}</span>
+                          </div>
                             `;
   });
 
   // 댓글 정보 뿌리기
   comments.forEach((myCommentInfo) => {
     userCommentTag.innerHTML += `
-                                  <li>Content : ${myCommentInfo.content}</li>
-                                  <li>Date : ${myCommentInfo.date}</li>
-                                  <p></p>
+                                <div class="comment-card">
+                                <span id="comment-content">내용: ${myCommentInfo.content}</span>
+                                <span id="comment-date">생성일: ${myCommentInfo.date}</span>
+                              </div>
                                 `;
   });
 };
