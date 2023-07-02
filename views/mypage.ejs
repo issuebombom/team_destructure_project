@@ -4,56 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link href="/mypage/mypage.css" rel="stylesheet" />
     <script defer src="/mypage/mypage.js"></script>
     <title>유저 마이 페이지</title>
   </head>
-
-  <style>
-    ul {
-      list-style: none;
-      padding-left: 0px;
-      font-weight: bold;
-    }
-
-    .user {
-      margin-bottom: 45px;
-    }
-
-    .post {
-      margin-bottom: 45px;
-    }
-
-    .comment {
-      margin-bottom: 45px;
-    }
-  </style>
   <body>
-    <header>
-      <a href="../views/main.ejs" id="homeBtn"
-        ><img src="../assets/image/home.png" alt="홈으로 가기"
-      /></a>
-      <h1>이 페이지는 <font color="blue"> <%=nickname %></font>회원님의 마이페이지 입니다.</h1>
+    <header class="header-container">
+      <a href="/main" id="homeBtn">HOME</a>
+      <h1 id="title">ɴᴏᴅᴇ ʙᴏᴏᴋ</h1>
     </header>
-    <form class="user-detail-form" id="user-detail">
-      <div class="user">
-        <h2><font color="red"><%=nickname %></font> 정보 조회</h2>
-        <ul class="user-tag" id="user-tag"></ul>
-        <button id="changeNicknameBtn">닉네임 변경</button>
-        <button id="changeInterestBtn">관심사 변경</button>
-        <button id="changePasswordBtn">패스워드 변경</button>
-      </div>
+    <div class="user-container">
+      <section class="user-section">
+        <h2><%=nickname %>회원님 환영합니다.</h2>
+        <form class="user-detail-form" id="user-detail">
+          <div class="user">
+            <ul class="user-tag" id="user-tag"></ul>
+            <button id="changeNicknameBtn">닉네임 변경</button>
+            <button id="changeInterestBtn">관심사 변경</button>
+            <button id="changePasswordBtn">패스워드 변경</button>
+            <button id="userFireBtn">회원 탈퇴</button>
+          </div>
+        </form>
+      </section>
+    </div>
+    <div class="section-box">
+      <section class="post-section">
+        <div class="post">
+          <h2><%=nickname %>의 게시글 조회</h2>
+          <ul class="user-post-tag" id="user-post-tag"></ul>
+        </div>
+      </section>
 
-      <div class="post">
-        <h2><font color="violet"><%=nickname %></font> 의 게시글 조회</h2>
-        <ul class="user-post-tag" id="user-post-tag"></ul>
-      </div>
-
-      <div class="comment">
-        <h2><font color="orange"><%=nickname %></font> 의 댓글 조회</h2>
-        <ul class="user-comment-tag" id="user-comment-tag"></ul>
-      </div>
-
-      <button id="userFireBtn">회원 탈퇴</button>
-    </form>
+      <section class="comment-section">
+        <div class="comment">
+          <h2><%=nickname %>의 댓글 조회</h2>
+          <ul class="user-comment-tag" id="user-comment-tag"></ul>
+        </div>
+      </section>
+    </div>
   </body>
 </html>

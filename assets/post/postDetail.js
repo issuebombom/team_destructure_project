@@ -6,11 +6,8 @@ const postDetail = async (postId) => {
     const data = await res.json();
 
     if (res.ok) {
-      const postDetail = document.querySelector('.detailSection');
       const post = data.post;
-      console.log(post.title);
       const content = post.content.split('<img')[0];
-      const img = '<img' + post.content.split('<img')[1];
       document.querySelector('#postTitle').value = post.title;
       document.querySelector('#postInterest').value = post.categoryList;
       document.querySelector('#postContent').value = content;
