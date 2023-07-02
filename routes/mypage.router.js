@@ -65,7 +65,7 @@ router.get('/mypage/userinfo', verifyAccessToken, async (req, res) => {
 // 유저 정보 수정 (nickname,interest,password)
 
 // 유저 닉네임 변경코드
-router.put('/mypage/nickname', verifyAccessToken, async (req, res) => {
+router.put('/mypage', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
   const { nickname } = req.body;
 
@@ -95,7 +95,7 @@ router.put('/mypage/nickname', verifyAccessToken, async (req, res) => {
 });
 
 // 유저 관심사 변경코드
-router.put('/mypage/interest', verifyAccessToken, async (req, res) => {
+router.put('/mypage', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
   const { interest } = req.body;
 
@@ -135,7 +135,7 @@ router.put('/mypage/interest', verifyAccessToken, async (req, res) => {
 });
 
 // 유저 패스워드 변경코드
-router.put('/mypage/password', verifyAccessToken, async (req, res) => {
+router.put('/mypage', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
   const { newPassword, newPasswordConfirm } = req.body;
 
@@ -199,7 +199,7 @@ router.put('/mypage/password', verifyAccessToken, async (req, res) => {
 });
 
 // 회원탈퇴
-router.delete('/mypage/userfire', verifyAccessToken, async (req, res) => {
+router.delete('/mypage', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
   const { deletePassword } = req.body;
 
