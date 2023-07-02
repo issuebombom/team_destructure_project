@@ -11,13 +11,21 @@ const spreadPost = async (path) => {
         cards.innerHTML += `
                       <div class="post-card">
                         <a href="/posts/detail/${post.postId}">게시글 번호: <${post.postId}></a>
+                        <hr />
                         <span>닉네임: ${post.Nickname}</span>
+                        <hr />
                         <span>카테고리: ${post.categoryList}</span>
-                        <span>게시글: ${post.content}</span>
+                        <hr />
+                        <span>제목: ${post.title}</span>
+                        <hr />
+                        <span>내용: ${post.content}</span>
+                        <hr />
+                        <div class="like-container">
                         <button class="like-button" data-post-id="${post.postId}">👍</button>
                         <span class="like-count-${post.postId}">
                           ${post.Likes.length}
                         </span>
+                        </div>
                       </div>
                       `;
       });

@@ -125,6 +125,7 @@ body {
   font-weight: bold;
   height: 40px;
   width: 90px;
+  max-width: 100%;
   margin-bottom: 10px;
   background-color: #ecd8b2;
   color: black;
