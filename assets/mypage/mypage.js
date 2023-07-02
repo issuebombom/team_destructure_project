@@ -138,11 +138,14 @@ changeInterestBtn.addEventListener('click', changeInterest);
 // 비밀번호 변경하기
 const changePasswordBtn = document.getElementById('changePasswordBtn');
 const changePassword = async () => {
-  // 새로운 관심사를 받고,
+  // 새로운 패스워드를 받고,
   const newPassword = prompt(`영문 대소문자 및 숫자로 3글자 이상의 암호를 입력해주세요.`);
+
   // true 값이라면,
   if (newPassword) {
     try {
+      // 새로운 패스워드 확인하기.
+      const newPasswordConfirm = prompt(`새로운 비밀번호를 다시 한 번 입력해주세요.`);
       // 해당 URI로 PUT요청을 보냄.
       const res = await fetch('/mypage/password', {
         method: 'PUT',
@@ -151,7 +154,7 @@ const changePassword = async () => {
           'Content-Type': 'application/json',
         },
         // 바디에 값을 제이슨 형식으로 전달한다.
-        body: JSON.stringify({ newPassword, confirm: newPassword }),
+        body: JSON.stringify({ newPassword, newPasswordConfirm }),
         // 전달해서 로직을 수행하고,
       });
       // 제이슨 형태로 결과값을 받는다.

@@ -137,22 +137,19 @@ router.put('/mypage/interest', verifyAccessToken, async (req, res) => {
 // 유저 패스워드 변경코드
 router.put('/mypage/password', verifyAccessToken, async (req, res) => {
   const userData = res.locals.user;
-  const { newPassword, confirm } = req.body;
+  const { newPassword, newPasswordConfirm } = req.body;
 
   // 바디에 입력받은 newPassword 해쉬화
   const saltRounds = 10;
 
   // 바디에 입력받은 newPassword를 단방향 암호화 시킨것
   const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-  console.log(hashedPassword);
 
   // Users 모델에 저장되어 있는 userId의 패스워드
   const { password } = await Users.findOne({ where: { userId: userData.userId } });
-  console.log(password);
 
   // 해쉬화 시킨 패스워드와, 로그인된 유저의 패스워드가 일치한지 확인
   const matchPassword = await bcrypt.compare(newPassword, password);
-  console.log(matchPassword);
 
   try {
     // 패스워드형식 예외처리
@@ -179,7 +176,7 @@ router.put('/mypage/password', verifyAccessToken, async (req, res) => {
     }
 
     // 패스워드 confirm값과 일치한지 확인
-    if (newPassword !== confirm) {
+    if (newPassword !== newPasswordConfirm) {
       return res.status(412).json({
         errorMessage: '패스워드 확인값이 일치하지 않습니다.',
       });
@@ -211,15 +208,12 @@ router.delete('/mypage/userfire', verifyAccessToken, async (req, res) => {
 
   // 바디에 입력받은 deletePassword 단방향 암호화
   const hashedPassword = await bcrypt.hash(deletePassword, saltRounds);
-  console.log(hashedPassword);
 
   // Users 모델에 저장되어 있는 userId의 패스워드
   const { password } = await Users.findOne({ where: { userId: userData.userId } });
-  console.log(password);
 
   // 해쉬화 시킨 패스워드와, 로그인된 유저의 패스워드가 일치한지 확인
   const matchPassword = await bcrypt.compare(deletePassword, password);
-  console.log(matchPassword);
 
   try {
     // 입력받은 password가 회원의 패스워드와 일치한지 확인
