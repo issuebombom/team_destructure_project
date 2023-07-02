@@ -1,14 +1,20 @@
 const express = require('express');
 const { Op } = require('sequelize');
 const { Posts, Categories, Likes } = require('../models');
-const { verifyAccessToken } = require('../middleware/auth.middleware');
+const { verifyAccessToken, isLoggedIn } = require('../middleware/auth.middleware');
 const uploadMiddleware = require('../middleware/uploadMiddleware');
+const errors = require('../assets/errors');
 const router = express.Router();
 const fetch = require('node-fetch');
 
-// 게시글 작성 페이지 띄우기
-router.get('/posts', async (req, res) => {
-  res.render('createPost');
+// 게시글 작성 페이지 띄우기 (비 로그인 시 로그인 페이지로 이동)
+router.get('/posts', isLoggedIn, async (req, res) => {
+  const isLoggedIn = res.locals.isLoggedIn;
+  if (!isLoggedIn) {
+    res.render('login')
+  } else {
+    res.render('createPost')
+  }
 });
 
 // 게시글 수정 페이지 띄우기
@@ -222,7 +228,7 @@ router.get('/lookup', async (req, res) => {
 router.put('/posts/:postId', async (req, res) => {
   try {
     const { postId, categoryList, title, content } = req.body;
-    console.log(postId, categoryList)
+    console.log(postId, categoryList);
 
     const modifyPost = await Posts.findOne({ where: { postId } });
     if (!modifyPost) {

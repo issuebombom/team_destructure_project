@@ -87,7 +87,7 @@ async function isLoggedIn(req, res, next) {
 
     // 쿠키가 없는 경우
     if (!cookies?.accessCookie) {
-      res.locals.isloggedIn = false;
+      res.locals.isLoggedIn = false;
       return next();
     }
 
@@ -95,10 +95,10 @@ async function isLoggedIn(req, res, next) {
     const accessToken = cookies.accessCookie;
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_KEY, async (err) => {
       if (err) {
-        res.locals.isloggedIn = false;
+        res.locals.isLoggedIn = false;
         return next();
       } else {
-        res.locals.isloggedIn = true;
+        res.locals.isLoggedIn = true;
       }
       next();
     });
