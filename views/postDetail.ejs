@@ -33,9 +33,11 @@
       <input type="file" name="file" id="file" onchange="readURL(this)" />
       <img id="preview" />
       <br />
-      <button type="button" value="<%" ="postId" %>id="modifyBtn">수정</button>
-      <button type="button" value="<%" ="postId" %>id="deleteBtn">삭제</button>
+      <div class="button-container">
+      <button type="button" value="<%=postId %>id="modifyBtn">수정</button>
+      <button type="button" value="<%=postId %>id="deleteBtn">삭제</button>
       <button type="button" id="cancel">취소</button>
+    </div>
     </form>
   </body>
 </html>

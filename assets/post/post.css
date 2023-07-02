@@ -83,16 +83,19 @@ body {
 
 .postForm button {
   font-weight: bold;
-  width: 300px;
+  width: 200px;
   padding: 10px;
-  margin-bottom: 10px;
+  margin: 0 10px 20px 20px;
   background-color: #ecd8b2;
   color: black;
   border: none;
   border-radius: 3px;
   cursor: pointer;
-  margin-left: auto;
-  margin-right: auto;
+}
+
+.form-button {
+  display: flex;
+  flex-direction: row;
 }
 
 .postForm button:hover {
@@ -104,7 +107,9 @@ body {
   margin-top: 10px;
 }
 
-/* .button-container {
+.button-container {
+  max-width: 100%;
   display: flex;
+  justify-content: center;
   flex-direction: row;
-} */
+}
