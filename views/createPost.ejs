@@ -10,7 +10,7 @@
   <body>
     <header class="header-container">
       <a href="/main" id="homeBtn">HOME</a>
-      <h1 id="title">ɴᴏᴅᴇ ʙᴏᴏᴋ</h1>
+      <h1 id="title">ɴᴏᴅᴇ ʙᴏᴏᴋ📚</h1>
     </header>
     <form class="postForm" enctype="multipart/form-data">
       <label>제목:</label>
@@ -31,8 +31,10 @@
       <input type="file" name="file" id="file" onchange="readURL(this)" />
       <img id="preview" />
       <br />
-      <button tpye="submit" id="createPostBtn">작성</button>
-      <button type="button" id="cancelPostBtn">취소</button>
+      <div class="form-button">
+        <button tpye="submit" id="createPostBtn">작성</button>
+        <button type="button" id="cancelPostBtn">취소</button>
+      </div>
     </form>
   </body>
   <script src="/post/post.js"></script>
