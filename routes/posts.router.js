@@ -56,7 +56,8 @@ router.get('/posts/detail/:postId', verifyAccessToken, async (req, res) => {
 // 게시글 작성
 router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async (req, res) => {
   try {
-    const userId = res.locals.user;
+    const userId = res.locals.user.userId;
+    const user = await Users.findByPk(userId);
     const filepath = req.file ? req.file.location : null;
     const { categoryList, title, content } = req.body;
     if (!title || !content) {
@@ -72,8 +73,8 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
     const updatedContent = `${content} ${imageTag}`;
     // text사이에 img 삽입하는 방법을 찾아봐야함
     const post = await Posts.create({
-      UserId: userId.userId,
-      Nickname: userId.nickname,
+      UserId: user.userId,
+      Nickname: user.nickname,
       categoryList,
       title,
       content: updatedContent,
@@ -243,6 +244,7 @@ router.get('/lookup', async (req, res) => {
         },
       ],
     });
+
     return res.status(200).json({
       postList,
     });

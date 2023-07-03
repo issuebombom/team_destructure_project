@@ -75,10 +75,10 @@ const searchEvent = (() => {
 
   searchForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    const searchKeyword = event.target[0].value
+    const searchKeyword = event.target[0].value;
     spreadPost(`/lookup?keyword=${searchKeyword}`);
-  })
-})()
+  });
+})();
 
 // 좋아요 버튼에 이벤트리스너 등록
 document.addEventListener('DOMContentLoaded', () => {
