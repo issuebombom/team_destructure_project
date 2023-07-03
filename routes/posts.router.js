@@ -68,7 +68,7 @@ router.post('/posts', verifyAccessToken, uploadMiddleware.single('file'), async 
     }
 
     const imageTag = filepath
-      ? `<img src="${filepath}" alt="게시글 이미지"onerror="this.src = this.src.replace(/\/thumb\//, '/original/'); style="width: 200px"/>`
+      ? `<img src="${filepath}" width="300" height="300 alt="게시글 이미지" />`
       : '';
     const updatedContent = `${content} ${imageTag}`;
     // text사이에 img 삽입하는 방법을 찾아봐야함
