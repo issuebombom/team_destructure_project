@@ -204,7 +204,7 @@ const userFire = async () => {
           alert(result.errorMessage);
         } else {
           alert(result.message);
-          window.location.reload();
+          window.location.href = '/login';
         }
       });
     } catch (err) {
