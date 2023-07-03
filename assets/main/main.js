@@ -6,6 +6,7 @@ const spreadPost = async (path) => {
     const data = await res.json();
 
     if (res.ok) {
+      location.reload()
       cards.innerHTML = '';
       data.postList.forEach((post) => {
         cards.innerHTML += `
