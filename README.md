@@ -1,6 +1,6 @@
 # 📚 NODEBOOK PROJECT
 
-![MAIN](./assets/image/main.png)
+![MAIN](./assets/image/main2.png)
 
 ## 개요
 
