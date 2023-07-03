@@ -8,11 +8,15 @@ const router = express.Router();
 // 마이 페이지 띄우기
 router.get('/mypage', verifyAccessToken, async (req, res) => {
   const { userId } = res.locals.user;
-  const userData = await Users.findOne({ where: { userId } }); // DB에서 해당 userId를 갖고있는 user의 data를 할당.
+  const userData = await Users.findOne({ where: { userId } });
 
-  res.render('mypage.ejs', {
-    nickname: userData.nickname,
-  });
+  if (userData) {
+    res.render('mypage.ejs', {
+      nickname: userData.nickname,
+    });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 // 유저 정보 조회 (유저정보 + 게시글 + 댓글)
