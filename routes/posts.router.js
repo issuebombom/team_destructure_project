@@ -17,10 +17,10 @@ router.get('/posts', isLoggedIn, async (req, res) => {
   }
 });
 
-// 게시글 수정 페이지 띄우기
-router.get('/posts/:postId', async (req, res) => {
-  res.render('createPost');
-});
+// // 게시글 수정 페이지 띄우기
+// router.get('/posts/:postId', async (req, res) => {
+//   res.render('createPost');
+// });
 
 // 상세게시글 조회 페이지 띄우기
 router.get('/posts/detail/:postId', verifyAccessToken, async (req, res) => {
