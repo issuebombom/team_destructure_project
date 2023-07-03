@@ -220,6 +220,7 @@ router.get('/lookup', async (req, res) => {
         },
       ],
     });
+
     return res.status(200).json({
       postList,
     });
